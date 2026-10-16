@@ -1,6 +1,6 @@
 <p align="center">
   <img
-    src="https://raw.githubusercontent.com/varavelio/vdl/9cb8432f972f986ba91ffa1e4fe82220a8aa373f/assets/png/vdl.png"
+    src="https://cdn.jsdelivr.net/gh/varavelio/vdl@9cb843/assets/png/vdl.png"
     alt="VDL logo"
     width="130"
   />
@@ -19,6 +19,10 @@
   <a href="https://varavel.com/vdl">
     <img src="https://cdn.jsdelivr.net/gh/varavelio/brand@1.0.0/dist/badges/vdl-plugin.svg" alt="VDL Plugin"/>
   </a>
+</p>
+
+<p align="center">
+  Strictly follows <a href="https://vdl.varavel.com/docs/protocols/http-rpc/">VPP-2: HTTP-RPC</a>.
 </p>
 
 This plugin converts your VDL RPC schema into an OpenAPI document that can be used by API gateways, API clients (e.g. Postman), documentation tooling, contract validation workflows, and code generation pipelines.
@@ -42,7 +46,7 @@ const config = {
   version 1
   plugins [
     {
-      src "varavelio/vdl-plugin-rpc-openapi@v0.1.3"
+      src "varavelio/vdl-plugin-rpc-openapi@<version>" // Use a version from plugin releases
       schema "./schema.vdl"
       outDir "./gen"
     }
@@ -82,7 +86,7 @@ const config = {
   version 1
   plugins [
     {
-      src "varavelio/vdl-plugin-rpc-openapi@v0.1.3"
+      src "varavelio/vdl-plugin-rpc-openapi@<version>" // Use a version from plugin releases
       schema "./schema.vdl"
       outDir "./gen"
       options {
