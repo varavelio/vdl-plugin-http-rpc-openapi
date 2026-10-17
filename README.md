@@ -6,18 +6,24 @@
   />
 </p>
 
-<h1 align="center">VDL RPC OpenAPI Plugin</h1>
+<h1 align="center">VDL HTTP RPC OpenAPI Plugin</h1>
 
 <p align="center">
-  Generate OpenAPI 3.0 specifications for <strong>VDL RPC</strong> <strong>procedures</strong> and <strong>streams</strong>.
+  Generate OpenAPI 3.0 specifications for <strong>VDL HTTP RPC procedures</strong>.
 </p>
 
 <p align="center">
   <a href="https://varavel.com">
-    <img src="https://cdn.jsdelivr.net/gh/varavelio/brand@1.0.0/dist/badges/project.svg" alt="A Varavel project"/>
+    <img
+      src="https://cdn.jsdelivr.net/gh/varavelio/brand@1.0.0/dist/badges/project.svg"
+      alt="A Varavel project"
+    />
   </a>
   <a href="https://varavel.com/vdl">
-    <img src="https://cdn.jsdelivr.net/gh/varavelio/brand@1.0.0/dist/badges/vdl-plugin.svg" alt="VDL Plugin"/>
+    <img
+      src="https://cdn.jsdelivr.net/gh/varavelio/brand@1.0.0/dist/badges/vdl-plugin.svg"
+      alt="VDL Plugin"
+    />
   </a>
 </p>
 
@@ -25,9 +31,9 @@
   Strictly follows <a href="https://vdl.varavel.com/docs/protocols/http-rpc/">VPP-2: HTTP-RPC</a>.
 </p>
 
-This plugin converts your VDL RPC schema into an OpenAPI document that can be used by API gateways, API clients (e.g. Postman), documentation tooling, contract validation workflows, and code generation pipelines.
+This plugin converts your VDL HTTP RPC schema into an OpenAPI document that can be used by API gateways, API clients (e.g. Postman), documentation tooling, contract validation workflows, and code generation pipelines.
 
-It is RPC-focused.
+It is HTTP RPC-focused.
 
 Use it when you want to:
 
@@ -46,7 +52,7 @@ const config = {
   version 1
   plugins [
     {
-      src "varavelio/vdl-plugin-rpc-openapi@<version>" // Use a version from plugin releases
+      src "varavelio/vdl-plugin-http-rpc-openapi@<version>" // Use a version from plugin releases
       schema "./schema.vdl"
       outDir "./gen"
     }
@@ -66,18 +72,18 @@ vdl generate
 
 All options are optional.
 
-| Option           | Type     | Default          | What it changes                                                                                                                                                                                                     |
-| ---------------- | -------- | ---------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `outFile`        | `string` | `"openapi.yaml"` | Output filename inside `outDir`. Extension controls format: `.yaml`/`.yml` for YAML, `.json` for JSON. Set to `""` explicitly to skip schema generation entirely (only the playground is produced when configured). |
-| `playgroundFile` | `string` | `""`             | Generates an additional standalone HTML API docs file next to `outFile`. Must end in `.html`. If it is not present, the playground is not generated.                                                                |
-| `playgroundUi`   | `string` | `"swagger-ui"`   | Chooses which standalone docs UI to generate for `playgroundFile`: `swagger-ui`, `scalar`, or `stoplight-elements`.                                                                                                 |
-| `title`          | `string` | `"VDL RPC API"`  | Sets `info.title` in the generated OpenAPI document and the HTML `<title>` of generated playgrounds.                                                                                                                |
-| `version`        | `string` | `"1.0.0"`        | Sets `info.version` in the generated OpenAPI document.                                                                                                                                                              |
-| `description`    | `string` | `""`             | Sets `info.description` when provided.                                                                                                                                                                              |
-| `baseUrl`        | `string` | `""`             | Adds `servers` entries when provided. Use a comma-separated list to emit multiple server URLs.                                                                                                                      |
-| `contactName`    | `string` | `""`             | Sets `info.contact.name` when provided.                                                                                                                                                                             |
-| `contactEmail`   | `string` | `""`             | Sets `info.contact.email` when provided.                                                                                                                                                                            |
-| `licenseName`    | `string` | `""`             | Sets `info.license.name` when provided.                                                                                                                                                                             |
+| Option           | Type     | Default              | What it changes                                                                                                                                                                                                     |
+| ---------------- | -------- | -------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `outFile`        | `string` | `"openapi.yaml"`     | Output filename inside `outDir`. Extension controls format: `.yaml`/`.yml` for YAML, `.json` for JSON. Set to `""` explicitly to skip schema generation entirely (only the playground is produced when configured). |
+| `playgroundFile` | `string` | `""`                 | Generates an additional standalone HTML API docs file next to `outFile`. Must end in `.html`. If it is not present, the playground is not generated.                                                                |
+| `playgroundUi`   | `string` | `"swagger-ui"`       | Chooses which standalone docs UI to generate for `playgroundFile`: `swagger-ui`, `scalar`, or `stoplight-elements`.                                                                                                 |
+| `title`          | `string` | `"VDL HTTP RPC API"` | Sets `info.title` in the generated OpenAPI document and the HTML `<title>` of generated playgrounds.                                                                                                                |
+| `version`        | `string` | `"1.0.0"`            | Sets `info.version` in the generated OpenAPI document.                                                                                                                                                              |
+| `description`    | `string` | `""`                 | Sets `info.description` when provided.                                                                                                                                                                              |
+| `baseUrl`        | `string` | `""`                 | Adds `servers` entries when provided. Use a comma-separated list to emit multiple server URLs.                                                                                                                      |
+| `contactName`    | `string` | `""`                 | Sets `info.contact.name` when provided.                                                                                                                                                                             |
+| `contactEmail`   | `string` | `""`                 | Sets `info.contact.email` when provided.                                                                                                                                                                            |
+| `licenseName`    | `string` | `""`                 | Sets `info.license.name` when provided.                                                                                                                                                                             |
 
 Example with all options:
 
@@ -86,7 +92,7 @@ const config = {
   version 1
   plugins [
     {
-      src "varavelio/vdl-plugin-rpc-openapi@<version>" // Use a version from plugin releases
+      src "varavelio/vdl-plugin-http-rpc-openapi@<version>" // Use a version from plugin releases
       schema "./schema.vdl"
       outDir "./gen"
       options {
@@ -113,18 +119,17 @@ Notes:
 - `playgroundUi` is only used when `playgroundFile` is present.
 - `baseUrl` accepts either one URL or multiple comma-separated URLs. Each URL becomes one OpenAPI `servers` entry.
 
-## RPC Annotation Model
+## HTTP RPC Annotation Model
 
-This plugin reads RPC operations from the standard VDL RPC annotations:
+This plugin reads HTTP RPC operations from the standard VDL RPC annotations:
 
-- `@rpc` marks a top-level service type
+- `@httpRpc` marks a top-level service type
 - `@proc` marks a request/response operation
-- `@stream` marks a SSE stream operation
 
 Example:
 
 ```vdl
-@rpc
+@httpRpc
 type ChatService {
   @proc
   sendMessage {
@@ -137,18 +142,6 @@ type ChatService {
       accepted bool
     }
   }
-
-  @stream
-  events {
-    input {
-      roomId string
-    }
-
-    output {
-      text string
-      createdAt datetime
-    }
-  }
 }
 ```
 
@@ -156,10 +149,10 @@ type ChatService {
 
 - OpenAPI document version `3.0.0`.
 - A global `AuthToken` security scheme using the `Authorization` header.
-- Tag groups per RPC service and operation kind (`<Service>Procedures`, `<Service>Streams`).
+- Tag groups per HTTP RPC service and operation kind (`<Service>Procedures`, `<Service>Streams`).
 - One `POST` path per operation with route pattern `/<RpcTypeName>/<operationName>`.
 - Reusable request bodies and responses under `components.requestBodies` and `components.responses`.
-- All non-RPC VDL types and enums emitted under `components.schemas`.
+- All non HTTP RPC VDL types and enums emitted under `components.schemas`.
 
 ## Response Envelope Behavior
 
@@ -168,10 +161,6 @@ Operation responses are wrapped in a consistent envelope:
 - `ok` (`boolean`) always present
 - `output` object with your declared output fields
 - `error` object with at least `message` and optional metadata
-
-For `@proc` operations, the media type is `application/json`.
-
-For `@stream` operations, the media type is `text/event-stream`.
 
 ## Notes
 

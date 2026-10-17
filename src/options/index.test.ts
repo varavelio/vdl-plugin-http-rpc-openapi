@@ -9,7 +9,7 @@ describe("resolveOpenApiOptions", () => {
       outFile: "openapi.yaml",
       outFormat: "yaml",
       playgroundUi: "swagger-ui",
-      title: "VDL RPC API",
+      title: "VDL HTTP RPC API",
       version: "1.0.0",
     });
   });
@@ -107,7 +107,7 @@ describe("resolveOpenApiOptions", () => {
   it("replaces empty title and version with defaults", () => {
     const options = resolvePluginOptions({ title: "", version: "" });
 
-    expect(options.title).toBe("VDL RPC API");
+    expect(options.title).toBe("VDL HTTP RPC API");
     expect(options.version).toBe("1.0.0");
   });
 
@@ -119,7 +119,7 @@ describe("resolveOpenApiOptions", () => {
       outFormat: "yaml",
       playgroundFile: undefined,
       playgroundUi: "swagger-ui",
-      title: "VDL RPC API",
+      title: "VDL HTTP RPC API",
       version: "1.0.0",
     });
   });

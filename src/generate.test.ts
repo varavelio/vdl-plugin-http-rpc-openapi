@@ -213,7 +213,7 @@ describe("generateOpenApi", () => {
     expect(output.files).toHaveLength(1);
 
     const file = getGeneratedFile(output, "playground.html");
-    expect(file.content).toContain("<title>VDL RPC API</title>");
+    expect(file.content).toContain("<title>VDL HTTP RPC API</title>");
     expect(file.content).toContain("const OPENAPI_SPEC = {");
     expect(file.content).toContain('"openapi": "3.0.0"');
   });

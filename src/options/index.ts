@@ -8,7 +8,7 @@ import { trim } from "@varavel/vdl-plugin-sdk/utils/strings";
 
 const DEFAULT_OUT_FILE = "openapi.yaml";
 const DEFAULT_PLAYGROUND_UI = "swagger-ui";
-const DEFAULT_TITLE = "VDL RPC API";
+const DEFAULT_TITLE = "VDL HTTP RPC API";
 const DEFAULT_VERSION = "1.0.0";
 
 type OutFormat = "yaml" | "json";
