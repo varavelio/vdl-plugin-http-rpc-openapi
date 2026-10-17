@@ -137,20 +137,79 @@ describe("resolveOpenApiOptions", () => {
   it("throws when outFile has an unsupported extension", () => {
     expect(() => {
       resolvePluginOptions({ outFile: "openapi.txt" });
-    }).toThrowError('Option "outFile" must end with .yaml, .yml, or .json');
+    }).toThrow('Option "outFile" must end with .yaml, .yml, or .json');
   });
 
   it("throws when playgroundFile does not end with .html", () => {
     expect(() => {
       resolvePluginOptions({ playgroundFile: "docs.txt" });
-    }).toThrowError('Option "playgroundFile" must end with .html');
+    }).toThrow('Option "playgroundFile" must end with .html');
   });
 
   it("throws when playgroundUi is unsupported", () => {
     expect(() => {
       resolvePluginOptions({ playgroundUi: "redoc" });
-    }).toThrowError(
+    }).toThrow(
       'Option "playgroundUi" must be one of "swagger-ui", "scalar", or "stoplight-elements"',
+    );
+  });
+});
+
+describe("resolveAuthOptions", () => {
+  it("defaults to a generic API key header", () => {
+    const options = resolvePluginOptions({});
+
+    expect(options).toMatchObject({
+      auth: "apiKey",
+      authApiKeyName: "Authorization",
+      authApiKeyIn: "header",
+    });
+  });
+
+  it("accepts every supported auth preset", () => {
+    for (const auth of ["none", "apiKey", "bearer", "basic"] as const) {
+      expect(resolvePluginOptions({ auth }).auth).toBe(auth);
+    }
+  });
+
+  it("accepts custom API key name and location", () => {
+    const options = resolvePluginOptions({
+      auth: "apiKey",
+      authApiKeyName: "X-API-Key",
+      authApiKeyIn: "query",
+    });
+
+    expect(options).toMatchObject({
+      authApiKeyName: "X-API-Key",
+      authApiKeyIn: "query",
+    });
+  });
+
+  it("falls back to defaults when API key fields are empty", () => {
+    const options = resolvePluginOptions({
+      authApiKeyName: "",
+      authApiKeyIn: "",
+    });
+
+    expect(options).toMatchObject({
+      authApiKeyName: "Authorization",
+      authApiKeyIn: "header",
+    });
+  });
+
+  it("throws when auth is unsupported", () => {
+    expect(() => {
+      resolvePluginOptions({ auth: "oauth2" });
+    }).toThrow(
+      'Option "auth" must be one of "none", "apiKey", "bearer", or "basic"',
+    );
+  });
+
+  it("throws when authApiKeyIn is unsupported", () => {
+    expect(() => {
+      resolvePluginOptions({ authApiKeyIn: "body" });
+    }).toThrow(
+      'Option "authApiKeyIn" must be one of "header", "query", or "cookie"',
     );
   });
 });

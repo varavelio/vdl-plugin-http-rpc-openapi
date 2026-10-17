@@ -1,6 +1,7 @@
 import type { IrSchema } from "@varavel/vdl-plugin-sdk";
 import { getAnnotation } from "@varavel/vdl-plugin-sdk/utils/ir";
 import { pascalCase } from "@varavel/vdl-plugin-sdk/utils/strings";
+import type { PluginOptions } from "../options";
 import type { RpcGroup } from "../rpc-model";
 import {
   generateEnumSchema,
@@ -12,27 +13,31 @@ import {
 const AUTH_TOKEN_DESCRIPTION =
   "Enter the full value for the Authorization header. The specific format (Bearer, Basic, API Key, etc.) is determined by the server's implementation.\n\n---\n**Examples:**\n- **Bearer Token:** `Bearer eyJhbGciOiJIUzI1Ni...` (a JWT token)\n- **Basic Auth:** `Basic dXNlcm5hbWU6cGFzc3dvcmQ=` (a base64 encoding of `username:password`)\n- **API Key:** `sk_live_123abc456def` (a raw token)";
 
+const BEARER_DESCRIPTION =
+  "Enter the bearer token. The playground sends it as `Authorization: Bearer <token>`.";
+
+const BASIC_DESCRIPTION =
+  "Enter the username and password. The playground sends them as `Authorization: Basic <base64(username:password)>`.";
+
 /**
  * Builds the reusable OpenAPI components section.
  */
 export function buildComponents(
   ir: IrSchema,
   rpcGroups: RpcGroup[],
+  options: PluginOptions,
 ): Record<string, unknown> {
   const schemas = buildSchemas(ir);
   const requestBodies = buildRequestBodies(rpcGroups);
   const responses = buildResponses(rpcGroups);
 
-  const components: Record<string, unknown> = {
-    securitySchemes: {
-      AuthToken: {
-        type: "apiKey",
-        in: "header",
-        name: "Authorization",
-        description: AUTH_TOKEN_DESCRIPTION,
-      },
-    },
-  };
+  const components: Record<string, unknown> = {};
+
+  const securitySchemes = buildSecuritySchemes(options);
+
+  if (securitySchemes) {
+    components.securitySchemes = securitySchemes;
+  }
 
   if (Object.keys(schemas).length > 0) {
     components.schemas = schemas;
@@ -47,6 +52,45 @@ export function buildComponents(
   }
 
   return components;
+}
+
+/**
+ * Builds the `AuthToken` security scheme for the configured `auth` preset.
+ * Returns undefined when authentication is disabled.
+ */
+function buildSecuritySchemes(
+  options: PluginOptions,
+): Record<string, unknown> | undefined {
+  switch (options.auth) {
+    case "none":
+      return undefined;
+    case "bearer":
+      return {
+        AuthToken: {
+          type: "http",
+          scheme: "bearer",
+          bearerFormat: "JWT",
+          description: BEARER_DESCRIPTION,
+        },
+      };
+    case "basic":
+      return {
+        AuthToken: {
+          type: "http",
+          scheme: "basic",
+          description: BASIC_DESCRIPTION,
+        },
+      };
+    default:
+      return {
+        AuthToken: {
+          type: "apiKey",
+          in: options.authApiKeyIn,
+          name: options.authApiKeyName,
+          description: AUTH_TOKEN_DESCRIPTION,
+        },
+      };
+  }
 }
 
 function buildSchemas(ir: IrSchema): Record<string, unknown> {

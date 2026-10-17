@@ -1,0 +1,98 @@
+openapi: 3.0.0
+info:
+  title: Auth ApiKey API
+  version: 1.0.0
+security:
+  - AuthToken: []
+tags:
+  - name: EntityServiceProcedures
+    description: Procedures for EntityService
+paths:
+  /entityService/getEntity:
+    post:
+      tags:
+        - EntityServiceProcedures
+      requestBody:
+        $ref: "#/components/requestBodies/EntityServiceGetEntityInput"
+      responses:
+        "200":
+          $ref: "#/components/responses/EntityServiceGetEntityOutput"
+components:
+  securitySchemes:
+    AuthToken:
+      type: apiKey
+      in: query
+      name: X-API-Key
+      description: >-
+        Enter the full value for the Authorization header. The specific format
+        (Bearer, Basic, API Key, etc.) is determined by the server's
+        implementation.
+
+
+        ---
+
+        **Examples:**
+
+        - **Bearer Token:** `Bearer eyJhbGciOiJIUzI1Ni...` (a JWT token)
+
+        - **Basic Auth:** `Basic dXNlcm5hbWU6cGFzc3dvcmQ=` (a base64 encoding of
+        `username:password`)
+
+        - **API Key:** `sk_live_123abc456def` (a raw token)
+  schemas:
+    Entity:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+      required:
+        - id
+        - name
+  requestBodies:
+    EntityServiceGetEntityInput:
+      description: Request body for EntityService/getEntity procedure
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              id:
+                type: string
+            required:
+              - id
+  responses:
+    EntityServiceGetEntityOutput:
+      description: Response for EntityService/getEntity procedure
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              ok:
+                type: boolean
+              output:
+                type: object
+                properties:
+                  entity:
+                    $ref: "#/components/schemas/Entity"
+                required:
+                  - entity
+              error:
+                type: object
+                properties:
+                  message:
+                    type: string
+                  category:
+                    type: string
+                  code:
+                    type: string
+                  details:
+                    type: object
+                    properties: {}
+                    additionalProperties: true
+                required:
+                  - message
+            required:
+              - ok

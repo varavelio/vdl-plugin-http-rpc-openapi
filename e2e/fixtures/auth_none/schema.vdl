@@ -1,0 +1,20 @@
+// Tests auth preset output
+
+type Entity {
+  id string
+  name string
+}
+
+@httpRpc
+type EntityService {
+  @proc
+  getEntity {
+    input {
+      id string
+    }
+
+    output {
+      entity Entity
+    }
+  }
+}

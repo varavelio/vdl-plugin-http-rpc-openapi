@@ -3221,6 +3221,9 @@ var DEFAULT_OUT_FILE = "openapi.yaml";
 var DEFAULT_PLAYGROUND_UI = "swagger-ui";
 var DEFAULT_TITLE = "VDL HTTP RPC API";
 var DEFAULT_VERSION = "1.0.0";
+var DEFAULT_AUTH = "apiKey";
+var DEFAULT_AUTH_API_KEY_NAME = "Authorization";
+var DEFAULT_AUTH_API_KEY_IN = "header";
 function resolvePluginOptions(options) {
   const rawOutFile = getOptionString(options, "outFile", DEFAULT_OUT_FILE);
   const outFile = rawOutFile === "" ? void 0 : rawOutFile;
@@ -3240,7 +3243,14 @@ function resolvePluginOptions(options) {
     baseUrls: resolveBaseUrls(options),
     contactName: optionalStrOption(options, "contactName"),
     contactEmail: optionalStrOption(options, "contactEmail"),
-    licenseName: optionalStrOption(options, "licenseName")
+    licenseName: optionalStrOption(options, "licenseName"),
+    auth: resolveAuth(options),
+    authApiKeyName: requiredStrOption(
+      options,
+      "authApiKeyName",
+      DEFAULT_AUTH_API_KEY_NAME
+    ),
+    authApiKeyIn: resolveAuthApiKeyIn(options)
   };
 }
 __name(resolvePluginOptions, "resolvePluginOptions");
@@ -3282,6 +3292,34 @@ function resolvePlaygroundUi(options) {
   );
 }
 __name(resolvePlaygroundUi, "resolvePlaygroundUi");
+function resolveAuth(options) {
+  const auth = trim(getOptionString(options, "auth", DEFAULT_AUTH));
+  if (auth === "") {
+    return DEFAULT_AUTH;
+  }
+  if (auth === "none" || auth === "apiKey" || auth === "bearer" || auth === "basic") {
+    return auth;
+  }
+  fail(
+    `Option "auth" must be one of "none", "apiKey", "bearer", or "basic". Received: ${JSON.stringify(auth)}.`
+  );
+}
+__name(resolveAuth, "resolveAuth");
+function resolveAuthApiKeyIn(options) {
+  const authApiKeyIn = trim(
+    getOptionString(options, "authApiKeyIn", DEFAULT_AUTH_API_KEY_IN)
+  ).toLowerCase();
+  if (authApiKeyIn === "") {
+    return DEFAULT_AUTH_API_KEY_IN;
+  }
+  if (authApiKeyIn === "header" || authApiKeyIn === "query" || authApiKeyIn === "cookie") {
+    return authApiKeyIn;
+  }
+  fail(
+    `Option "authApiKeyIn" must be one of "header", "query", or "cookie". Received: ${JSON.stringify(authApiKeyIn)}.`
+  );
+}
+__name(resolveAuthApiKeyIn, "resolveAuthApiKeyIn");
 function resolveBaseUrls(options) {
   const baseUrls = getOptionArray(options, "baseUrl", [], ",");
   return baseUrls.length > 0 ? baseUrls : void 0;
@@ -3674,20 +3712,17 @@ __name(primitiveToJsonSchema, "primitiveToJsonSchema");
 
 // src/spec-builder/components.ts
 var AUTH_TOKEN_DESCRIPTION = "Enter the full value for the Authorization header. The specific format (Bearer, Basic, API Key, etc.) is determined by the server's implementation.\n\n---\n**Examples:**\n- **Bearer Token:** `Bearer eyJhbGciOiJIUzI1Ni...` (a JWT token)\n- **Basic Auth:** `Basic dXNlcm5hbWU6cGFzc3dvcmQ=` (a base64 encoding of `username:password`)\n- **API Key:** `sk_live_123abc456def` (a raw token)";
-function buildComponents(ir, rpcGroups) {
+var BEARER_DESCRIPTION = "Enter the bearer token. The playground sends it as `Authorization: Bearer <token>`.";
+var BASIC_DESCRIPTION = "Enter the username and password. The playground sends them as `Authorization: Basic <base64(username:password)>`.";
+function buildComponents(ir, rpcGroups, options) {
   const schemas2 = buildSchemas(ir);
   const requestBodies = buildRequestBodies(rpcGroups);
   const responses = buildResponses(rpcGroups);
-  const components = {
-    securitySchemes: {
-      AuthToken: {
-        type: "apiKey",
-        in: "header",
-        name: "Authorization",
-        description: AUTH_TOKEN_DESCRIPTION
-      }
-    }
-  };
+  const components = {};
+  const securitySchemes = buildSecuritySchemes(options);
+  if (securitySchemes) {
+    components.securitySchemes = securitySchemes;
+  }
   if (Object.keys(schemas2).length > 0) {
     components.schemas = schemas2;
   }
@@ -3700,6 +3735,39 @@ function buildComponents(ir, rpcGroups) {
   return components;
 }
 __name(buildComponents, "buildComponents");
+function buildSecuritySchemes(options) {
+  switch (options.auth) {
+    case "none":
+      return void 0;
+    case "bearer":
+      return {
+        AuthToken: {
+          type: "http",
+          scheme: "bearer",
+          bearerFormat: "JWT",
+          description: BEARER_DESCRIPTION
+        }
+      };
+    case "basic":
+      return {
+        AuthToken: {
+          type: "http",
+          scheme: "basic",
+          description: BASIC_DESCRIPTION
+        }
+      };
+    default:
+      return {
+        AuthToken: {
+          type: "apiKey",
+          in: options.authApiKeyIn,
+          name: options.authApiKeyName,
+          description: AUTH_TOKEN_DESCRIPTION
+        }
+      };
+  }
+}
+__name(buildSecuritySchemes, "buildSecuritySchemes");
 function buildSchemas(ir) {
   const typeEntries = [];
   const enumEntries = [];
@@ -3892,9 +3960,11 @@ __name(tagDescription, "tagDescription");
 function buildOpenApiSpec(ir, rpcGroups, options) {
   const spec = {
     openapi: "3.0.0",
-    info: buildInfo(options),
-    security: [{ AuthToken: [] }]
+    info: buildInfo(options)
   };
+  if (options.auth !== "none") {
+    spec.security = [{ AuthToken: [] }];
+  }
   if (options.baseUrls && options.baseUrls.length > 0) {
     spec.servers = options.baseUrls.map((url) => ({ url }));
   }
@@ -3904,7 +3974,7 @@ function buildOpenApiSpec(ir, rpcGroups, options) {
   }
   const paths = buildPaths(rpcGroups);
   spec.paths = paths;
-  spec.components = buildComponents(ir, rpcGroups);
+  spec.components = buildComponents(ir, rpcGroups, options);
   return spec;
 }
 __name(buildOpenApiSpec, "buildOpenApiSpec");

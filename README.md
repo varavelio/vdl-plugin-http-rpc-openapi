@@ -84,6 +84,9 @@ All options are optional.
 | `contactName`    | `string` | `""`                 | Sets `info.contact.name` when provided.                                                                                                                                                                             |
 | `contactEmail`   | `string` | `""`                 | Sets `info.contact.email` when provided.                                                                                                                                                                            |
 | `licenseName`    | `string` | `""`                 | Sets `info.license.name` when provided.                                                                                                                                                                             |
+| `auth`           | `string` | `"apiKey"`           | Security preset applied globally: `none` omits auth, `apiKey` sends a raw key, `bearer` sends `Authorization: Bearer <token>`, `basic` sends Basic auth base64 credentials.                                         |
+| `authApiKeyName` | `string` | `"Authorization"`    | Key name sent as the API key value. Only used when `auth` is `apiKey`.                                                                                                                                              |
+| `authApiKeyIn`   | `string` | `"header"`           | Location of the API key value: `header`, `query`, or `cookie`. Only used when `auth` is `apiKey`.                                                                                                                   |  |
 
 Example with all options:
 
@@ -106,6 +109,9 @@ const config = {
         contactName "Platform API Team"
         contactEmail "api@example.com"
         licenseName "MIT"
+        auth "apiKey"
+        authApiKeyName "Authorization"
+        authApiKeyIn "header"
       }
     }
   ]
@@ -118,6 +124,8 @@ Notes:
 - Set `outFile` to `""` explicitly to skip generating the OpenAPI schema file. When combined with `playgroundFile`, only the HTML playground is produced. When set without a playground, no files are generated.
 - `playgroundUi` is only used when `playgroundFile` is present.
 - `baseUrl` accepts either one URL or multiple comma-separated URLs. Each URL becomes one OpenAPI `servers` entry.
+- `auth` defaults to a generic `apiKey` header named `Authorization`. Use `none` for public APIs, `bearer` for JWT, `basic` for username and password.
+- `authApiKeyName` and `authApiKeyIn` only apply when `auth` is `apiKey`.
 
 ## HTTP RPC Annotation Model
 

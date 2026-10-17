@@ -26,8 +26,11 @@ export function buildOpenApiSpec(
   const spec: OpenApiSpec = {
     openapi: "3.0.0",
     info: buildInfo(options),
-    security: [{ AuthToken: [] }],
   };
+
+  if (options.auth !== "none") {
+    spec.security = [{ AuthToken: [] }];
+  }
 
   if (options.baseUrls && options.baseUrls.length > 0) {
     spec.servers = options.baseUrls.map((url) => ({ url }));
@@ -42,7 +45,7 @@ export function buildOpenApiSpec(
   const paths = buildPaths(rpcGroups);
   spec.paths = paths;
 
-  spec.components = buildComponents(ir, rpcGroups);
+  spec.components = buildComponents(ir, rpcGroups, options);
 
   return spec;
 }

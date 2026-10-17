@@ -29,6 +29,9 @@ const baseOptions: PluginOptions = {
   playgroundUi: "swagger-ui",
   title: "Test API",
   version: "1.0.0",
+  auth: "apiKey",
+  authApiKeyName: "Authorization",
+  authApiKeyIn: "header",
 };
 
 describe("generateTypeRefSchema", () => {
@@ -431,5 +434,72 @@ describe("buildOpenApiSpec", () => {
     expect(schemas.User).toBeDefined();
     expect(schemas.Role).toBeDefined();
     expect(schemas.RpcService).toBeUndefined();
+  });
+});
+
+describe("buildOpenApiSpec auth", () => {
+  it("omits security when auth is none", () => {
+    const spec = buildOpenApiSpec(schema(), [], {
+      ...baseOptions,
+      auth: "none",
+    });
+
+    expect(spec.security).toBeUndefined();
+
+    const components = spec.components as Record<string, unknown>;
+    expect(components.securitySchemes).toBeUndefined();
+  });
+
+  it("emits a bearer scheme when auth is bearer", () => {
+    const spec = buildOpenApiSpec(schema(), [], {
+      ...baseOptions,
+      auth: "bearer",
+    });
+
+    expect(spec.security).toEqual([{ AuthToken: [] }]);
+
+    const components = spec.components as Record<string, unknown>;
+    expect(components.securitySchemes).toEqual({
+      AuthToken: {
+        type: "http",
+        scheme: "bearer",
+        bearerFormat: "JWT",
+        description: expect.any(String),
+      },
+    });
+  });
+
+  it("emits a basic scheme when auth is basic", () => {
+    const spec = buildOpenApiSpec(schema(), [], {
+      ...baseOptions,
+      auth: "basic",
+    });
+
+    const components = spec.components as Record<string, unknown>;
+    expect(components.securitySchemes).toEqual({
+      AuthToken: {
+        type: "http",
+        scheme: "basic",
+        description: expect.any(String),
+      },
+    });
+  });
+
+  it("emits a custom API key scheme when name and location change", () => {
+    const spec = buildOpenApiSpec(schema(), [], {
+      ...baseOptions,
+      auth: "apiKey",
+      authApiKeyName: "X-API-Key",
+      authApiKeyIn: "query",
+    });
+
+    const components = spec.components as Record<string, unknown>;
+    expect(components.securitySchemes).toMatchObject({
+      AuthToken: {
+        type: "apiKey",
+        in: "query",
+        name: "X-API-Key",
+      },
+    });
   });
 });

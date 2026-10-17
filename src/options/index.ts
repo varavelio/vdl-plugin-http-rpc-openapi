@@ -10,9 +10,18 @@ const DEFAULT_OUT_FILE = "openapi.yaml";
 const DEFAULT_PLAYGROUND_UI = "swagger-ui";
 const DEFAULT_TITLE = "VDL HTTP RPC API";
 const DEFAULT_VERSION = "1.0.0";
+const DEFAULT_AUTH: AuthMode = "apiKey";
+const DEFAULT_AUTH_API_KEY_NAME = "Authorization";
+const DEFAULT_AUTH_API_KEY_IN: AuthApiKeyIn = "header";
 
 type OutFormat = "yaml" | "json";
 type PlaygroundUi = "swagger-ui" | "scalar" | "stoplight-elements";
+
+/** OpenAPI security preset emitted for every procedure. */
+export type AuthMode = "none" | "apiKey" | "bearer" | "basic";
+
+/** Location of the API key value when `auth` is `apiKey`. */
+export type AuthApiKeyIn = "header" | "query" | "cookie";
 
 export type PluginOptions = {
   /** Path for the generated OpenAPI schema file. When undefined, no schema file is produced. */
@@ -27,6 +36,9 @@ export type PluginOptions = {
   contactName?: string;
   contactEmail?: string;
   licenseName?: string;
+  auth: AuthMode;
+  authApiKeyName: string;
+  authApiKeyIn: AuthApiKeyIn;
 };
 
 /**
@@ -55,6 +67,13 @@ export function resolvePluginOptions(
     contactName: optionalStrOption(options, "contactName"),
     contactEmail: optionalStrOption(options, "contactEmail"),
     licenseName: optionalStrOption(options, "licenseName"),
+    auth: resolveAuth(options),
+    authApiKeyName: requiredStrOption(
+      options,
+      "authApiKeyName",
+      DEFAULT_AUTH_API_KEY_NAME,
+    ),
+    authApiKeyIn: resolveAuthApiKeyIn(options),
   };
 }
 
@@ -105,6 +124,49 @@ function resolvePlaygroundUi(options: Record<string, string>): PlaygroundUi {
 
   fail(
     `Option "playgroundUi" must be one of "swagger-ui", "scalar", or "stoplight-elements". Received: ${JSON.stringify(playgroundUi)}.`,
+  );
+}
+
+function resolveAuth(options: Record<string, string>): AuthMode {
+  const auth = trim(getOptionString(options, "auth", DEFAULT_AUTH));
+
+  if (auth === "") {
+    return DEFAULT_AUTH;
+  }
+
+  if (
+    auth === "none" ||
+    auth === "apiKey" ||
+    auth === "bearer" ||
+    auth === "basic"
+  ) {
+    return auth;
+  }
+
+  fail(
+    `Option "auth" must be one of "none", "apiKey", "bearer", or "basic". Received: ${JSON.stringify(auth)}.`,
+  );
+}
+
+function resolveAuthApiKeyIn(options: Record<string, string>): AuthApiKeyIn {
+  const authApiKeyIn = trim(
+    getOptionString(options, "authApiKeyIn", DEFAULT_AUTH_API_KEY_IN),
+  ).toLowerCase();
+
+  if (authApiKeyIn === "") {
+    return DEFAULT_AUTH_API_KEY_IN;
+  }
+
+  if (
+    authApiKeyIn === "header" ||
+    authApiKeyIn === "query" ||
+    authApiKeyIn === "cookie"
+  ) {
+    return authApiKeyIn;
+  }
+
+  fail(
+    `Option "authApiKeyIn" must be one of "header", "query", or "cookie". Received: ${JSON.stringify(authApiKeyIn)}.`,
   );
 }
 
