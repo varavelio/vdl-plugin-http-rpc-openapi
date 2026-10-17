@@ -9,7 +9,7 @@ type Profile {
   metadata? map[string]
 }
 
-@rpc
+@httpRpc
 type ProfileService {
   @proc
   getProfile {

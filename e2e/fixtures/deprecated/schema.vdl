@@ -12,7 +12,7 @@ type UserV2 {
   email string
 }
 
-@rpc
+@httpRpc
 type UserService {
   @deprecated("Use GetUserV2 instead")
   @proc

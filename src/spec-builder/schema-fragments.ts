@@ -1,6 +1,9 @@
 import type { EnumDef, Field, TypeDef, TypeRef } from "@varavel/vdl-plugin-sdk";
+import {
+  getDeprecationMessage,
+  isDeprecated,
+} from "@varavel/vdl-plugin-sdk/utils/deprecations";
 import { unwrapLiteral } from "@varavel/vdl-plugin-sdk/utils/ir";
-import { getDeprecatedMessage, hasDeprecatedAnnotation } from "./deprecation";
 
 /**
  * Converts a type definition to a reusable OpenAPI schema under components.
@@ -29,19 +32,7 @@ export function generateTypeSchema(typeDef: TypeDef): Record<string, unknown> {
     schema.description = typeDef.doc;
   }
 
-  const deprecatedMessage = getDeprecatedMessage(typeDef.annotations);
-
-  if (deprecatedMessage !== undefined) {
-    schema.deprecated = true;
-
-    if (deprecatedMessage !== "") {
-      const currentDescription = String(schema.description ?? "");
-      schema.description =
-        currentDescription === ""
-          ? `Deprecated: ${deprecatedMessage}`
-          : `${currentDescription}\n\nDeprecated: ${deprecatedMessage}`;
-    }
-  }
+  applyDeprecation(schema, typeDef.annotations, typeDef.doc);
 
   return schema;
 }
@@ -68,9 +59,7 @@ export function generateEnumSchema(enumDef: EnumDef): Record<string, unknown> {
     schema.description = enumDef.doc;
   }
 
-  if (hasDeprecatedAnnotation(enumDef.annotations)) {
-    schema.deprecated = true;
-  }
+  applyDeprecation(schema, enumDef.annotations, enumDef.doc);
 
   return schema;
 }
@@ -156,6 +145,8 @@ export function generatePropertiesFromFields(fields: Field[]): {
       }
     }
 
+    applyDeprecation(propertySchema, field.annotations, field.doc);
+
     properties[field.name] = propertySchema;
 
     if (!field.optional) {
@@ -204,18 +195,29 @@ export function generateProcedureResponse(
   };
 }
 
-export function generateStreamResponse(
-  fields: Field[],
-  description: string,
-): Record<string, unknown> {
-  return {
-    description,
-    content: {
-      "text/event-stream": {
-        schema: buildOutputEnvelopeSchema(fields),
-      },
-    },
-  };
+function applyDeprecation(
+  schema: Record<string, unknown>,
+  annotations: Field["annotations"],
+  doc: string | undefined,
+): void {
+  if (!isDeprecated(annotations)) {
+    return;
+  }
+
+  schema.deprecated = true;
+
+  const message = getDeprecationMessage(annotations);
+
+  if (message === undefined || message === "") {
+    return;
+  }
+
+  const currentDescription = String(schema.description ?? doc ?? "");
+
+  schema.description =
+    currentDescription === ""
+      ? `Deprecated: ${message}`
+      : `${currentDescription}\n\nDeprecated: ${message}`;
 }
 
 function buildOutputEnvelopeSchema(fields: Field[]): Record<string, unknown> {

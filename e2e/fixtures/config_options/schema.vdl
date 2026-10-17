@@ -5,7 +5,7 @@ type Item {
   name string
 }
 
-@rpc
+@httpRpc
 type ItemService {
   @proc
   getItem {

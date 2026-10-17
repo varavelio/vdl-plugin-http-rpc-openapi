@@ -27,7 +27,7 @@ type Container {
   counts map[int[]]
 }
 
-@rpc
+@httpRpc
 type DataService {
   @proc
   processContainer {

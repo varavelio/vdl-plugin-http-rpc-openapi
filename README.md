@@ -37,11 +37,11 @@ It is HTTP RPC-focused.
 
 Use it when you want to:
 
-- publish a standard OpenAPI contract for your VDL RPC layer
-- expose request and response schemas for procedures and streams
+- publish a standard OpenAPI contract for your VDL HTTP RPC layer
+- expose request and response schemas for procedures
 - keep API docs synchronized with your source-of-truth VDL definitions
-- integrate your RPC APIs with OpenAPI-compatible tooling
-- import all the VDL RPC requests in an API client like Postman
+- integrate your HTTP RPC APIs with OpenAPI-compatible tooling
+- import all the VDL HTTP RPC requests in an API client like Postman
 
 ## Quick Start
 
@@ -121,7 +121,7 @@ Notes:
 
 ## HTTP RPC Annotation Model
 
-This plugin reads HTTP RPC operations from the standard VDL RPC annotations:
+This plugin reads HTTP RPC operations from the standard VDL HTTP RPC annotations:
 
 - `@httpRpc` marks a top-level service type
 - `@proc` marks a request/response operation
@@ -149,8 +149,8 @@ type ChatService {
 
 - OpenAPI document version `3.0.0`.
 - A global `AuthToken` security scheme using the `Authorization` header.
-- Tag groups per HTTP RPC service and operation kind (`<Service>Procedures`, `<Service>Streams`).
-- One `POST` path per operation with route pattern `/<RpcTypeName>/<operationName>`.
+- One tag group per HTTP RPC service (`<Service>Procedures`).
+- One `POST` path per procedure with route pattern `/<lowerFirst(RPCName)>/<ProcedureName>` (for example `/users/getUser`).
 - Reusable request bodies and responses under `components.requestBodies` and `components.responses`.
 - All non HTTP RPC VDL types and enums emitted under `components.schemas`.
 
@@ -164,7 +164,7 @@ Operation responses are wrapped in a consistent envelope:
 
 ## Notes
 
-- If there are no valid RPC operations in your schema, the plugin still generates a valid OpenAPI document skeleton (with `info`, `security`, and `components`).
+- If there are no valid procedures in your schema, the plugin still generates a valid OpenAPI document skeleton (with `info`, `security`, and `components`).
 
 ## License
 

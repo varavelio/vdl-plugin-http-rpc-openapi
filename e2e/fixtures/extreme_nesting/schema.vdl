@@ -202,7 +202,7 @@ type CollectionHell {
   }
 }
 
-@rpc
+@httpRpc
 type ExtremeService {
   @proc
   processDeep {
@@ -322,32 +322,4 @@ type ExtremeService {
     }
   }
 
-  // Stream with extreme types
-  @stream
-  extremeStream {
-    input {
-      config {
-        ...BaseA
-        filters map[{
-          conditions {
-            field string
-            values int[]
-          }[]
-        }]
-      }
-    }
-
-    output {
-      event {
-        ...BaseA
-        ...BaseB
-        ...BaseC
-        payload map[{
-          data {
-            nested string[][]
-          }[]
-        }]
-      }
-    }
-  }
 }

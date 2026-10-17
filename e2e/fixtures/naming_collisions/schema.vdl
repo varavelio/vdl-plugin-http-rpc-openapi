@@ -112,7 +112,7 @@ type Responses {
   success bool
 }
 
-@rpc
+@httpRpc
 type KeywordService {
   @proc
   testKeywords {

@@ -8,47 +8,63 @@ tags:
   - name: ServiceProcedures
     description: Procedures for Service
 paths:
-  /Service/createUser:
+  /service/createUser:
     post:
+      tags:
+        - ServiceProcedures
       requestBody:
         $ref: "#/components/requestBodies/ServiceCreateUserInput"
       responses:
         "200":
           $ref: "#/components/responses/ServiceCreateUserOutput"
+  /service/getUser:
+    post:
       tags:
         - ServiceProcedures
-  /Service/getUser:
-    post:
       requestBody:
         $ref: "#/components/requestBodies/ServiceGetUserInput"
       responses:
         "200":
           $ref: "#/components/responses/ServiceGetUserOutput"
-      tags:
-        - ServiceProcedures
 components:
   securitySchemes:
     AuthToken:
-      description: "Enter the full value for the Authorization header. The specific format (Bearer, Basic, API Key, etc.) is determined by the server's implementation.\n\n---\n**Examples:**\n- **Bearer Token:** `Bearer eyJhbGciOiJIUzI1Ni...` (a JWT token)\n- **Basic Auth:** `Basic dXNlcm5hbWU6cGFzc3dvcmQ=` (a base64 encoding of `username:password`)\n- **API Key:** `sk_live_123abc456def` (a raw token)"
+      type: apiKey
       in: header
       name: Authorization
-      type: apiKey
+      description: >-
+        Enter the full value for the Authorization header. The specific format
+        (Bearer, Basic, API Key, etc.) is determined by the server's
+        implementation.
+
+
+        ---
+
+        **Examples:**
+
+        - **Bearer Token:** `Bearer eyJhbGciOiJIUzI1Ni...` (a JWT token)
+
+        - **Basic Auth:** `Basic dXNlcm5hbWU6cGFzc3dvcmQ=` (a base64 encoding of
+        `username:password`)
+
+        - **API Key:** `sk_live_123abc456def` (a raw token)
   schemas:
     User:
+      type: object
       properties:
-        age:
-          type: integer
-        createdAt:
-          format: date-time
-          type: string
         id:
           type: string
-        isActive:
-          type: boolean
         name:
           type: string
+        age:
+          type: integer
         score:
           type: number
+        isActive:
+          type: boolean
+        createdAt:
+          type: string
+          format: date-time
       required:
         - id
         - name
@@ -56,107 +72,106 @@ components:
         - score
         - isActive
         - createdAt
-      type: object
   requestBodies:
     ServiceCreateUserInput:
+      description: Request body for Service/createUser procedure
       content:
         application/json:
           schema:
+            type: object
             properties:
-              age:
-                type: integer
-              isActive:
-                type: boolean
               name:
                 type: string
+              age:
+                type: integer
               score:
                 type: number
+              isActive:
+                type: boolean
             required:
               - name
               - age
               - score
               - isActive
-            type: object
-      description: Request body for Service/createUser procedure
     ServiceGetUserInput:
+      description: Request body for Service/getUser procedure
       content:
         application/json:
           schema:
+            type: object
             properties:
               id:
                 type: string
             required:
               - id
-            type: object
-      description: Request body for Service/getUser procedure
   responses:
     ServiceCreateUserOutput:
+      description: Response for Service/createUser procedure
       content:
         application/json:
           schema:
+            type: object
             properties:
-              error:
-                properties:
-                  category:
-                    type: string
-                  code:
-                    type: string
-                  details:
-                    additionalProperties: true
-                    properties: {}
-                    type: object
-                  message:
-                    type: string
-                required:
-                  - message
-                type: object
               ok:
                 type: boolean
               output:
+                type: object
                 properties:
-                  createdAt:
-                    format: date-time
-                    type: string
                   id:
                     type: string
+                  createdAt:
+                    type: string
+                    format: date-time
                 required:
                   - id
                   - createdAt
-                type: object
-            required:
-              - ok
-            type: object
-      description: Response for Service/createUser procedure
-    ServiceGetUserOutput:
-      content:
-        application/json:
-          schema:
-            properties:
               error:
+                type: object
                 properties:
+                  message:
+                    type: string
                   category:
                     type: string
                   code:
                     type: string
                   details:
-                    additionalProperties: true
-                    properties: {}
                     type: object
-                  message:
-                    type: string
+                    properties: {}
+                    additionalProperties: true
                 required:
                   - message
-                type: object
+            required:
+              - ok
+    ServiceGetUserOutput:
+      description: Response for Service/getUser procedure
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
               ok:
                 type: boolean
               output:
+                type: object
                 properties:
                   user:
                     $ref: "#/components/schemas/User"
                 required:
                   - user
+              error:
                 type: object
+                properties:
+                  message:
+                    type: string
+                  category:
+                    type: string
+                  code:
+                    type: string
+                  details:
+                    type: object
+                    properties: {}
+                    additionalProperties: true
+                required:
+                  - message
             required:
               - ok
-            type: object
-      description: Response for Service/getUser procedure

@@ -6,7 +6,6 @@ import {
   generateEnumSchema,
   generateProcedureResponse,
   generateRequestBody,
-  generateStreamResponse,
   generateTypeSchema,
 } from "./schema-fragments";
 
@@ -55,7 +54,7 @@ function buildSchemas(ir: IrSchema): Record<string, unknown> {
   const enumEntries: Array<[string, unknown]> = [];
 
   for (const typeDef of ir.types) {
-    if (getAnnotation(typeDef.annotations, "rpc")) {
+    if (getAnnotation(typeDef.annotations, "httpRpc")) {
       continue;
     }
 
@@ -87,18 +86,6 @@ function buildRequestBodies(rpcGroups: RpcGroup[]): Record<string, unknown> {
         ),
       ]);
     }
-
-    for (const operation of group.streams) {
-      const inputName = `${group.name}${pascalCase(operation.name)}Input`;
-
-      entries.push([
-        inputName,
-        generateRequestBody(
-          operation.inputFields,
-          `Request body for ${group.name}/${operation.name} stream subscription`,
-        ),
-      ]);
-    }
   }
 
   entries.sort((left, right) => left[0].localeCompare(right[0]));
@@ -118,18 +105,6 @@ function buildResponses(rpcGroups: RpcGroup[]): Record<string, unknown> {
         generateProcedureResponse(
           operation.outputFields,
           `Response for ${group.name}/${operation.name} procedure`,
-        ),
-      ]);
-    }
-
-    for (const operation of group.streams) {
-      const outputName = `${group.name}${pascalCase(operation.name)}Output`;
-
-      entries.push([
-        outputName,
-        generateStreamResponse(
-          operation.outputFields,
-          `Server-Sent Events for ${group.name}/${operation.name} stream`,
         ),
       ]);
     }

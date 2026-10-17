@@ -5,7 +5,7 @@ type Entity {
   value int
 }
 
-@rpc
+@httpRpc
 type EntityService {
   @proc
   getEntity {

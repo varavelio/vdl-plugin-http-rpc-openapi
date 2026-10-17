@@ -8,55 +8,65 @@ tags:
   - name: UserServiceProcedures
     description: Procedures for UserService
 paths:
-  /UserService/getUser:
+  /userService/getUser:
     post:
+      tags:
+        - UserServiceProcedures
       requestBody:
         $ref: "#/components/requestBodies/UserServiceGetUserInput"
       responses:
         "200":
           $ref: "#/components/responses/UserServiceGetUserOutput"
+  /userService/listUsers:
+    post:
       tags:
         - UserServiceProcedures
-  /UserService/listUsers:
-    post:
       requestBody:
         $ref: "#/components/requestBodies/UserServiceListUsersInput"
       responses:
         "200":
           $ref: "#/components/responses/UserServiceListUsersOutput"
-      tags:
-        - UserServiceProcedures
 components:
   securitySchemes:
     AuthToken:
-      description: "Enter the full value for the Authorization header. The specific format (Bearer, Basic, API Key, etc.) is determined by the server's implementation.\n\n---\n**Examples:**\n- **Bearer Token:** `Bearer eyJhbGciOiJIUzI1Ni...` (a JWT token)\n- **Basic Auth:** `Basic dXNlcm5hbWU6cGFzc3dvcmQ=` (a base64 encoding of `username:password`)\n- **API Key:** `sk_live_123abc456def` (a raw token)"
+      type: apiKey
       in: header
       name: Authorization
-      type: apiKey
+      description: >-
+        Enter the full value for the Authorization header. The specific format
+        (Bearer, Basic, API Key, etc.) is determined by the server's
+        implementation.
+
+
+        ---
+
+        **Examples:**
+
+        - **Bearer Token:** `Bearer eyJhbGciOiJIUzI1Ni...` (a JWT token)
+
+        - **Basic Auth:** `Basic dXNlcm5hbWU6cGFzc3dvcmQ=` (a base64 encoding of
+        `username:password`)
+
+        - **API Key:** `sk_live_123abc456def` (a raw token)
   schemas:
     Pagination:
+      type: object
       properties:
-        limit:
-          type: integer
         page:
+          type: integer
+        limit:
           type: integer
       required:
         - page
         - limit
-      type: object
-    Status:
-      enum:
-        - Active
-        - Inactive
-      type: string
     User:
-      description: User type documentation loaded from external file.
+      type: object
       properties:
-        email:
-          type: string
         id:
           type: string
         name:
+          type: string
+        email:
           type: string
         status:
           $ref: "#/components/schemas/Status"
@@ -65,102 +75,107 @@ components:
         - name
         - email
         - status
-      type: object
+      description: User type documentation loaded from external file.
+    Status:
+      type: string
+      enum:
+        - Active
+        - Inactive
   requestBodies:
     UserServiceGetUserInput:
+      description: Request body for UserService/getUser procedure
       content:
         application/json:
           schema:
+            type: object
             properties:
               id:
                 type: string
             required:
               - id
-            type: object
-      description: Request body for UserService/getUser procedure
     UserServiceListUsersInput:
+      description: Request body for UserService/listUsers procedure
       content:
         application/json:
           schema:
+            type: object
             properties:
-              limit:
-                type: integer
               page:
+                type: integer
+              limit:
                 type: integer
             required:
               - page
               - limit
-            type: object
-      description: Request body for UserService/listUsers procedure
   responses:
     UserServiceGetUserOutput:
+      description: Response for UserService/getUser procedure
       content:
         application/json:
           schema:
+            type: object
             properties:
-              error:
-                properties:
-                  category:
-                    type: string
-                  code:
-                    type: string
-                  details:
-                    additionalProperties: true
-                    properties: {}
-                    type: object
-                  message:
-                    type: string
-                required:
-                  - message
-                type: object
               ok:
                 type: boolean
               output:
+                type: object
                 properties:
                   user:
                     $ref: "#/components/schemas/User"
                 required:
                   - user
-                type: object
-            required:
-              - ok
-            type: object
-      description: Response for UserService/getUser procedure
-    UserServiceListUsersOutput:
-      content:
-        application/json:
-          schema:
-            properties:
               error:
+                type: object
                 properties:
+                  message:
+                    type: string
                   category:
                     type: string
                   code:
                     type: string
                   details:
-                    additionalProperties: true
-                    properties: {}
                     type: object
-                  message:
-                    type: string
+                    properties: {}
+                    additionalProperties: true
                 required:
                   - message
-                type: object
+            required:
+              - ok
+    UserServiceListUsersOutput:
+      description: Response for UserService/listUsers procedure
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
               ok:
                 type: boolean
               output:
+                type: object
                 properties:
-                  total:
-                    type: integer
                   users:
+                    type: array
                     items:
                       $ref: "#/components/schemas/User"
-                    type: array
+                  total:
+                    type: integer
                 required:
                   - users
                   - total
+              error:
                 type: object
+                properties:
+                  message:
+                    type: string
+                  category:
+                    type: string
+                  code:
+                    type: string
+                  details:
+                    type: object
+                    properties: {}
+                    additionalProperties: true
+                required:
+                  - message
             required:
               - ok
-            type: object
-      description: Response for UserService/listUsers procedure

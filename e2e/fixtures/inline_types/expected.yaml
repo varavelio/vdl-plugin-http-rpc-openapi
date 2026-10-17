@@ -8,97 +8,59 @@ paths: {}
 components:
   securitySchemes:
     AuthToken:
-      description: |-
-        Enter the full value for the Authorization header. The specific format (Bearer, Basic, API Key, etc.) is determined by the server's implementation.
-
-        ---
-        **Examples:**
-        - **Bearer Token:** `Bearer eyJhbGciOiJIUzI1Ni...` (a JWT token)
-        - **Basic Auth:** `Basic dXNlcm5hbWU6cGFzc3dvcmQ=` (a base64 encoding of `username:password`)
-        - **API Key:** `sk_live_123abc456def` (a raw token)
+      type: apiKey
       in: header
       name: Authorization
-      type: apiKey
+      description: >-
+        Enter the full value for the Authorization header. The specific format
+        (Bearer, Basic, API Key, etc.) is determined by the server's
+        implementation.
+
+
+        ---
+
+        **Examples:**
+
+        - **Bearer Token:** `Bearer eyJhbGciOiJIUzI1Ni...` (a JWT token)
+
+        - **Basic Auth:** `Basic dXNlcm5hbWU6cGFzc3dvcmQ=` (a base64 encoding of
+        `username:password`)
+
+        - **API Key:** `sk_live_123abc456def` (a raw token)
   schemas:
     ComplexInlineTypes:
+      type: object
       properties:
-        configs:
-          items:
-            additionalProperties:
-              properties:
-                key:
-                  type: string
-                value:
-                  type: string
-              required:
-                - key
-                - value
-              type: object
-            type: object
-          type: array
-        deepNest:
-          properties:
-            child:
-              properties:
-                grandChild:
-                  properties:
-                    greatGrandChild:
-                      properties:
-                        data:
-                          type: string
-                        level4:
-                          type: number
-                      required:
-                        - level4
-                        - data
-                      type: object
-                    level3:
-                      type: boolean
-                  required:
-                    - level3
-                    - greatGrandChild
-                  type: object
-                level2:
-                  type: integer
-              required:
-                - level2
-                - grandChild
-              type: object
-            level1:
-              type: string
-          required:
-            - level1
-            - child
-          type: object
         files:
+          type: array
           items:
+            type: object
             properties:
-              content:
-                type: string
               path:
+                type: string
+              content:
                 type: string
             required:
               - path
               - content
-            type: object
-          type: array
-        grid:
-          items:
-            items:
-              properties:
-                x:
-                  type: integer
-                "y":
-                  type: integer
-              required:
-                - x
-                - "y"
-              type: object
-            type: array
-          type: array
-        groupedFiles:
+        meta:
+          type: object
           additionalProperties:
+            type: object
+            properties:
+              createdAt:
+                type: string
+              author:
+                type: string
+            required:
+              - createdAt
+              - author
+        groupedFiles:
+          type: object
+          additionalProperties:
+            type: array
             items:
+              type: object
               properties:
                 name:
                   type: string
@@ -107,31 +69,78 @@ components:
               required:
                 - name
                 - size
-              type: object
-            type: array
-          type: object
-        meta:
-          additionalProperties:
-            properties:
-              author:
-                type: string
-              createdAt:
-                type: string
-            required:
-              - createdAt
-              - author
+        configs:
+          type: array
+          items:
             type: object
-          type: object
+            additionalProperties:
+              type: object
+              properties:
+                key:
+                  type: string
+                value:
+                  type: string
+              required:
+                - key
+                - value
+        grid:
+          type: array
+          items:
+            type: array
+            items:
+              type: object
+              properties:
+                x:
+                  type: integer
+                y:
+                  type: integer
+              required:
+                - x
+                - y
         simple:
+          type: object
           properties:
-            enabled:
-              type: boolean
             name:
               type: string
+            enabled:
+              type: boolean
           required:
             - name
             - enabled
+        deepNest:
           type: object
+          properties:
+            level1:
+              type: string
+            child:
+              type: object
+              properties:
+                level2:
+                  type: integer
+                grandChild:
+                  type: object
+                  properties:
+                    level3:
+                      type: boolean
+                    greatGrandChild:
+                      type: object
+                      properties:
+                        level4:
+                          type: number
+                        data:
+                          type: string
+                      required:
+                        - level4
+                        - data
+                  required:
+                    - level3
+                    - greatGrandChild
+              required:
+                - level2
+                - grandChild
+          required:
+            - level1
+            - child
       required:
         - files
         - meta
@@ -140,4 +149,3 @@ components:
         - grid
         - simple
         - deepNest
-      type: object

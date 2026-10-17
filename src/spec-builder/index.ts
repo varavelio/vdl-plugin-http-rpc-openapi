@@ -12,6 +12,7 @@ import {
 } from "./schema-fragments";
 import { buildTags } from "./tags";
 
+/** Final OpenAPI 3.0 document emitted by the plugin. */
 export type OpenApiSpec = Record<string, unknown>;
 
 /**

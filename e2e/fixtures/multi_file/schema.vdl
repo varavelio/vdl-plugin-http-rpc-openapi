@@ -18,7 +18,7 @@ enum Status {
   Inactive
 }
 
-@rpc
+@httpRpc
 type UserService {
   @proc
   getUser {

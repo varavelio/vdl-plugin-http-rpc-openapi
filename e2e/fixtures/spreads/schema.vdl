@@ -130,7 +130,7 @@ type SpreadInMaps {
   }]
 }
 
-@rpc
+@httpRpc
 type SpreadService {
   // Spread in input
   @proc
@@ -208,19 +208,4 @@ type SpreadService {
     }
   }
 
-  // Stream with spreads
-  @stream
-  eventStream {
-    input {
-      ...Pagination
-      eventTypes string[]
-    }
-
-    output {
-      ...Identifiable
-      ...Timestamps
-      eventType string
-      payload string
-    }
-  }
 }

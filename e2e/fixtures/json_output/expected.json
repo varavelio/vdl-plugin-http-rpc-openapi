@@ -16,8 +16,11 @@
     }
   ],
   "paths": {
-    "/EntityService/getEntity": {
+    "/entityService/getEntity": {
       "post": {
+        "tags": [
+          "EntityServiceProcedures"
+        ],
         "requestBody": {
           "$ref": "#/components/requestBodies/EntityServiceGetEntityInput"
         },
@@ -25,22 +28,22 @@
           "200": {
             "$ref": "#/components/responses/EntityServiceGetEntityOutput"
           }
-        },
-        "tags": ["EntityServiceProcedures"]
+        }
       }
     }
   },
   "components": {
     "securitySchemes": {
       "AuthToken": {
-        "description": "Enter the full value for the Authorization header. The specific format (Bearer, Basic, API Key, etc.) is determined by the server's implementation.\n\n---\n**Examples:**\n- **Bearer Token:** `Bearer eyJhbGciOiJIUzI1Ni...` (a JWT token)\n- **Basic Auth:** `Basic dXNlcm5hbWU6cGFzc3dvcmQ=` (a base64 encoding of `username:password`)\n- **API Key:** `sk_live_123abc456def` (a raw token)",
+        "type": "apiKey",
         "in": "header",
         "name": "Authorization",
-        "type": "apiKey"
+        "description": "Enter the full value for the Authorization header. The specific format (Bearer, Basic, API Key, etc.) is determined by the server's implementation.\n\n---\n**Examples:**\n- **Bearer Token:** `Bearer eyJhbGciOiJIUzI1Ni...` (a JWT token)\n- **Basic Auth:** `Basic dXNlcm5hbWU6cGFzc3dvcmQ=` (a base64 encoding of `username:password`)\n- **API Key:** `sk_live_123abc456def` (a raw token)"
       }
     },
     "schemas": {
       "Entity": {
+        "type": "object",
         "properties": {
           "id": {
             "type": "string"
@@ -49,36 +52,60 @@
             "type": "integer"
           }
         },
-        "required": ["id", "value"],
-        "type": "object"
+        "required": [
+          "id",
+          "value"
+        ]
       }
     },
     "requestBodies": {
       "EntityServiceGetEntityInput": {
+        "description": "Request body for EntityService/getEntity procedure",
         "content": {
           "application/json": {
             "schema": {
+              "type": "object",
               "properties": {
                 "id": {
                   "type": "string"
                 }
               },
-              "required": ["id"],
-              "type": "object"
+              "required": [
+                "id"
+              ]
             }
           }
-        },
-        "description": "Request body for EntityService/getEntity procedure"
+        }
       }
     },
     "responses": {
       "EntityServiceGetEntityOutput": {
+        "description": "Response for EntityService/getEntity procedure",
         "content": {
           "application/json": {
             "schema": {
+              "type": "object",
               "properties": {
-                "error": {
+                "ok": {
+                  "type": "boolean"
+                },
+                "output": {
+                  "type": "object",
                   "properties": {
+                    "entity": {
+                      "$ref": "#/components/schemas/Entity"
+                    }
+                  },
+                  "required": [
+                    "entity"
+                  ]
+                },
+                "error": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    },
                     "category": {
                       "type": "string"
                     },
@@ -86,36 +113,22 @@
                       "type": "string"
                     },
                     "details": {
-                      "additionalProperties": true,
+                      "type": "object",
                       "properties": {},
-                      "type": "object"
-                    },
-                    "message": {
-                      "type": "string"
+                      "additionalProperties": true
                     }
                   },
-                  "required": ["message"],
-                  "type": "object"
-                },
-                "ok": {
-                  "type": "boolean"
-                },
-                "output": {
-                  "properties": {
-                    "entity": {
-                      "$ref": "#/components/schemas/Entity"
-                    }
-                  },
-                  "required": ["entity"],
-                  "type": "object"
+                  "required": [
+                    "message"
+                  ]
                 }
               },
-              "required": ["ok"],
-              "type": "object"
+              "required": [
+                "ok"
+              ]
             }
           }
-        },
-        "description": "Response for EntityService/getEntity procedure"
+        }
       }
     }
   }

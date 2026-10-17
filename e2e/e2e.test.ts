@@ -30,7 +30,7 @@ describe("VDL Plugin OpenAPI e2e fixtures", () => {
   });
 
   it("includes all permanent e2e fixtures", () => {
-    expect(fixtureNames).toHaveLength(19);
+    expect(fixtureNames).toHaveLength(18);
   });
 
   it.each(fixtureNames)("matches fixture %s", (fixtureName) => {

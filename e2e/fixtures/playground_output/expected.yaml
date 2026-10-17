@@ -8,24 +8,40 @@ tags:
   - name: EntityServiceProcedures
     description: Procedures for EntityService
 paths:
-  /EntityService/getEntity:
+  /entityService/getEntity:
     post:
+      tags:
+        - EntityServiceProcedures
       requestBody:
         $ref: "#/components/requestBodies/EntityServiceGetEntityInput"
       responses:
         "200":
           $ref: "#/components/responses/EntityServiceGetEntityOutput"
-      tags:
-        - EntityServiceProcedures
 components:
   securitySchemes:
     AuthToken:
-      description: "Enter the full value for the Authorization header. The specific format (Bearer, Basic, API Key, etc.) is determined by the server's implementation.\n\n---\n**Examples:**\n- **Bearer Token:** `Bearer eyJhbGciOiJIUzI1Ni...` (a JWT token)\n- **Basic Auth:** `Basic dXNlcm5hbWU6cGFzc3dvcmQ=` (a base64 encoding of `username:password`)\n- **API Key:** `sk_live_123abc456def` (a raw token)"
+      type: apiKey
       in: header
       name: Authorization
-      type: apiKey
+      description: >-
+        Enter the full value for the Authorization header. The specific format
+        (Bearer, Basic, API Key, etc.) is determined by the server's
+        implementation.
+
+
+        ---
+
+        **Examples:**
+
+        - **Bearer Token:** `Bearer eyJhbGciOiJIUzI1Ni...` (a JWT token)
+
+        - **Basic Auth:** `Basic dXNlcm5hbWU6cGFzc3dvcmQ=` (a base64 encoding of
+        `username:password`)
+
+        - **API Key:** `sk_live_123abc456def` (a raw token)
   schemas:
     Entity:
+      type: object
       properties:
         id:
           type: string
@@ -34,50 +50,49 @@ components:
       required:
         - id
         - value
-      type: object
   requestBodies:
     EntityServiceGetEntityInput:
+      description: Request body for EntityService/getEntity procedure
       content:
         application/json:
           schema:
+            type: object
             properties:
               id:
                 type: string
             required:
               - id
-            type: object
-      description: Request body for EntityService/getEntity procedure
   responses:
     EntityServiceGetEntityOutput:
+      description: Response for EntityService/getEntity procedure
       content:
         application/json:
           schema:
+            type: object
             properties:
-              error:
-                properties:
-                  category:
-                    type: string
-                  code:
-                    type: string
-                  details:
-                    additionalProperties: true
-                    properties: {}
-                    type: object
-                  message:
-                    type: string
-                required:
-                  - message
-                type: object
               ok:
                 type: boolean
               output:
+                type: object
                 properties:
                   entity:
                     $ref: "#/components/schemas/Entity"
                 required:
                   - entity
+              error:
                 type: object
+                properties:
+                  message:
+                    type: string
+                  category:
+                    type: string
+                  code:
+                    type: string
+                  details:
+                    type: object
+                    properties: {}
+                    additionalProperties: true
+                required:
+                  - message
             required:
               - ok
-            type: object
-      description: Response for EntityService/getEntity procedure

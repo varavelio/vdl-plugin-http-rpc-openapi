@@ -8,155 +8,134 @@ tags:
   - name: DataServiceProcedures
     description: Procedures for DataService
 paths:
-  /DataService/inlineTest:
+  /dataService/inlineTest:
     post:
+      tags:
+        - DataServiceProcedures
       requestBody:
         $ref: "#/components/requestBodies/DataServiceInlineTestInput"
       responses:
         "200":
           $ref: "#/components/responses/DataServiceInlineTestOutput"
+  /dataService/processContainer:
+    post:
       tags:
         - DataServiceProcedures
-  /DataService/processContainer:
-    post:
       requestBody:
         $ref: "#/components/requestBodies/DataServiceProcessContainerInput"
       responses:
         "200":
           $ref: "#/components/responses/DataServiceProcessContainerOutput"
-      tags:
-        - DataServiceProcedures
 components:
   securitySchemes:
     AuthToken:
-      description: "Enter the full value for the Authorization header. The specific format (Bearer, Basic, API Key, etc.) is determined by the server's implementation.\n\n---\n**Examples:**\n- **Bearer Token:** `Bearer eyJhbGciOiJIUzI1Ni...` (a JWT token)\n- **Basic Auth:** `Basic dXNlcm5hbWU6cGFzc3dvcmQ=` (a base64 encoding of `username:password`)\n- **API Key:** `sk_live_123abc456def` (a raw token)"
+      type: apiKey
       in: header
       name: Authorization
-      type: apiKey
+      description: >-
+        Enter the full value for the Authorization header. The specific format
+        (Bearer, Basic, API Key, etc.) is determined by the server's
+        implementation.
+
+
+        ---
+
+        **Examples:**
+
+        - **Bearer Token:** `Bearer eyJhbGciOiJIUzI1Ni...` (a JWT token)
+
+        - **Basic Auth:** `Basic dXNlcm5hbWU6cGFzc3dvcmQ=` (a base64 encoding of
+        `username:password`)
+
+        - **API Key:** `sk_live_123abc456def` (a raw token)
   schemas:
     Address:
+      type: object
       properties:
+        street:
+          type: string
         city:
           type: string
         country:
-          type: string
-        street:
           type: string
       required:
         - street
         - city
         - country
-      type: object
     Contact:
+      type: object
       properties:
-        address:
-          $ref: "#/components/schemas/Address"
         email:
           type: string
         phone:
           type: string
+        address:
+          $ref: "#/components/schemas/Address"
       required:
         - email
         - phone
         - address
-      type: object
     Container:
+      type: object
       properties:
-        counts:
-          additionalProperties:
-            items:
-              type: integer
-            type: array
-          type: object
-        lookup:
-          additionalProperties:
-            $ref: "#/components/schemas/User"
-          type: object
-        matrix:
-          items:
-            items:
-              type: integer
-            type: array
-          type: array
         users:
+          type: array
           items:
             $ref: "#/components/schemas/User"
+        matrix:
           type: array
+          items:
+            type: array
+            items:
+              type: integer
+        lookup:
+          type: object
+          additionalProperties:
+            $ref: "#/components/schemas/User"
+        counts:
+          type: object
+          additionalProperties:
+            type: array
+            items:
+              type: integer
       required:
         - users
         - matrix
         - lookup
         - counts
-      type: object
     User:
+      type: object
       properties:
-        contact:
-          $ref: "#/components/schemas/Contact"
         id:
           type: string
-        metadata:
-          additionalProperties:
-            type: string
-          type: object
         name:
           type: string
         tags:
+          type: array
           items:
             type: string
-          type: array
+        metadata:
+          type: object
+          additionalProperties:
+            type: string
+        contact:
+          $ref: "#/components/schemas/Contact"
       required:
         - id
         - name
         - tags
         - metadata
         - contact
-      type: object
   requestBodies:
     DataServiceInlineTestInput:
+      description: Request body for DataService/inlineTest procedure
       content:
         application/json:
           schema:
+            type: object
             properties:
-              arrayOfInline:
-                items:
-                  properties:
-                    id:
-                      type: integer
-                    label:
-                      type: string
-                  required:
-                    - id
-                    - label
-                  type: object
-                type: array
-              mapOfInline:
-                additionalProperties:
-                  properties:
-                    active:
-                      type: boolean
-                    key:
-                      type: string
-                  required:
-                    - key
-                    - active
-                  type: object
-                type: object
-              nested:
-                properties:
-                  inner:
-                    properties:
-                      deep:
-                        type: string
-                    required:
-                      - deep
-                    type: object
-                  outer:
-                    type: string
-                required:
-                  - outer
-                  - inner
-                type: object
               simple:
+                type: object
                 properties:
                   name:
                     type: string
@@ -165,89 +144,125 @@ components:
                 required:
                   - name
                   - value
+              nested:
                 type: object
+                properties:
+                  outer:
+                    type: string
+                  inner:
+                    type: object
+                    properties:
+                      deep:
+                        type: string
+                    required:
+                      - deep
+                required:
+                  - outer
+                  - inner
+              arrayOfInline:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: integer
+                    label:
+                      type: string
+                  required:
+                    - id
+                    - label
+              mapOfInline:
+                type: object
+                additionalProperties:
+                  type: object
+                  properties:
+                    key:
+                      type: string
+                    active:
+                      type: boolean
+                  required:
+                    - key
+                    - active
             required:
               - simple
               - nested
               - arrayOfInline
               - mapOfInline
-            type: object
-      description: Request body for DataService/inlineTest procedure
     DataServiceProcessContainerInput:
+      description: Request body for DataService/processContainer procedure
       content:
         application/json:
           schema:
+            type: object
             properties:
               data:
                 $ref: "#/components/schemas/Container"
             required:
               - data
-            type: object
-      description: Request body for DataService/processContainer procedure
   responses:
     DataServiceInlineTestOutput:
+      description: Response for DataService/inlineTest procedure
       content:
         application/json:
           schema:
+            type: object
             properties:
-              error:
-                properties:
-                  category:
-                    type: string
-                  code:
-                    type: string
-                  details:
-                    additionalProperties: true
-                    properties: {}
-                    type: object
-                  message:
-                    type: string
-                required:
-                  - message
-                type: object
               ok:
                 type: boolean
               output:
+                type: object
                 properties:
                   success:
                     type: boolean
                 required:
                   - success
-                type: object
-            required:
-              - ok
-            type: object
-      description: Response for DataService/inlineTest procedure
-    DataServiceProcessContainerOutput:
-      content:
-        application/json:
-          schema:
-            properties:
               error:
+                type: object
                 properties:
+                  message:
+                    type: string
                   category:
                     type: string
                   code:
                     type: string
                   details:
-                    additionalProperties: true
-                    properties: {}
                     type: object
-                  message:
-                    type: string
+                    properties: {}
+                    additionalProperties: true
                 required:
                   - message
-                type: object
+            required:
+              - ok
+    DataServiceProcessContainerOutput:
+      description: Response for DataService/processContainer procedure
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
               ok:
                 type: boolean
               output:
+                type: object
                 properties:
                   processed:
                     $ref: "#/components/schemas/Container"
                 required:
                   - processed
+              error:
                 type: object
+                properties:
+                  message:
+                    type: string
+                  category:
+                    type: string
+                  code:
+                    type: string
+                  details:
+                    type: object
+                    properties: {}
+                    additionalProperties: true
+                required:
+                  - message
             required:
               - ok
-            type: object
-      description: Response for DataService/processContainer procedure

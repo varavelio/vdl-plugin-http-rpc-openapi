@@ -9,7 +9,7 @@ type User {
   createdAt datetime
 }
 
-@rpc
+@httpRpc
 type Service {
   @proc
   getUser {

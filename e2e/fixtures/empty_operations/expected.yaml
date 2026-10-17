@@ -5,89 +5,72 @@ info:
 security:
   - AuthToken: []
 tags:
-  - name: HealthServiceStreams
-    description: Streams for HealthService
   - name: PingServiceProcedures
     description: Procedures for PingService
 paths:
-  /HealthService/heartbeat:
+  /pingService/getStatus:
     post:
-      requestBody:
-        $ref: "#/components/requestBodies/HealthServiceHeartbeatInput"
-      responses:
-        "200":
-          $ref: "#/components/responses/HealthServiceHeartbeatOutput"
       tags:
-        - HealthServiceStreams
-  /HealthService/systemMetrics:
-    post:
-      requestBody:
-        $ref: "#/components/requestBodies/HealthServiceSystemMetricsInput"
-      responses:
-        "200":
-          $ref: "#/components/responses/HealthServiceSystemMetricsOutput"
-      tags:
-        - HealthServiceStreams
-  /PingService/getStatus:
-    post:
+        - PingServiceProcedures
       requestBody:
         $ref: "#/components/requestBodies/PingServiceGetStatusInput"
       responses:
         "200":
           $ref: "#/components/responses/PingServiceGetStatusOutput"
+  /pingService/logEvent:
+    post:
       tags:
         - PingServiceProcedures
-  /PingService/logEvent:
-    post:
       requestBody:
         $ref: "#/components/requestBodies/PingServiceLogEventInput"
       responses:
         "200":
           $ref: "#/components/responses/PingServiceLogEventOutput"
+  /pingService/ping:
+    post:
       tags:
         - PingServiceProcedures
-  /PingService/ping:
-    post:
       requestBody:
         $ref: "#/components/requestBodies/PingServicePingInput"
       responses:
         "200":
           $ref: "#/components/responses/PingServicePingOutput"
-      tags:
-        - PingServiceProcedures
 components:
   securitySchemes:
     AuthToken:
-      description: "Enter the full value for the Authorization header. The specific format (Bearer, Basic, API Key, etc.) is determined by the server's implementation.\n\n---\n**Examples:**\n- **Bearer Token:** `Bearer eyJhbGciOiJIUzI1Ni...` (a JWT token)\n- **Basic Auth:** `Basic dXNlcm5hbWU6cGFzc3dvcmQ=` (a base64 encoding of `username:password`)\n- **API Key:** `sk_live_123abc456def` (a raw token)"
+      type: apiKey
       in: header
       name: Authorization
-      type: apiKey
+      description: >-
+        Enter the full value for the Authorization header. The specific format
+        (Bearer, Basic, API Key, etc.) is determined by the server's
+        implementation.
+
+
+        ---
+
+        **Examples:**
+
+        - **Bearer Token:** `Bearer eyJhbGciOiJIUzI1Ni...` (a JWT token)
+
+        - **Basic Auth:** `Basic dXNlcm5hbWU6cGFzc3dvcmQ=` (a base64 encoding of
+        `username:password`)
+
+        - **API Key:** `sk_live_123abc456def` (a raw token)
   requestBodies:
-    HealthServiceHeartbeatInput:
-      content:
-        application/json:
-          schema:
-            properties: {}
-            type: object
-      description: Request body for HealthService/heartbeat stream subscription
-    HealthServiceSystemMetricsInput:
-      content:
-        application/json:
-          schema:
-            properties: {}
-            type: object
-      description: Request body for HealthService/systemMetrics stream subscription
     PingServiceGetStatusInput:
-      content:
-        application/json:
-          schema:
-            properties: {}
-            type: object
       description: Request body for PingService/getStatus procedure
-    PingServiceLogEventInput:
       content:
         application/json:
           schema:
+            type: object
+            properties: {}
+    PingServiceLogEventInput:
+      description: Request body for PingService/logEvent procedure
+      content:
+        application/json:
+          schema:
+            type: object
             properties:
               event:
                 type: string
@@ -96,108 +79,25 @@ components:
             required:
               - event
               - level
-            type: object
-      description: Request body for PingService/logEvent procedure
     PingServicePingInput:
-      content:
-        application/json:
-          schema:
-            properties: {}
-            type: object
       description: Request body for PingService/ping procedure
-  responses:
-    HealthServiceHeartbeatOutput:
-      content:
-        text/event-stream:
-          schema:
-            properties:
-              error:
-                properties:
-                  category:
-                    type: string
-                  code:
-                    type: string
-                  details:
-                    additionalProperties: true
-                    properties: {}
-                    type: object
-                  message:
-                    type: string
-                required:
-                  - message
-                type: object
-              ok:
-                type: boolean
-              output:
-                properties: {}
-                type: object
-            required:
-              - ok
-            type: object
-      description: Server-Sent Events for HealthService/heartbeat stream
-    HealthServiceSystemMetricsOutput:
-      content:
-        text/event-stream:
-          schema:
-            properties:
-              error:
-                properties:
-                  category:
-                    type: string
-                  code:
-                    type: string
-                  details:
-                    additionalProperties: true
-                    properties: {}
-                    type: object
-                  message:
-                    type: string
-                required:
-                  - message
-                type: object
-              ok:
-                type: boolean
-              output:
-                properties:
-                  metric:
-                    type: string
-                  timestamp:
-                    format: date-time
-                    type: string
-                  value:
-                    type: number
-                required:
-                  - metric
-                  - value
-                  - timestamp
-                type: object
-            required:
-              - ok
-            type: object
-      description: Server-Sent Events for HealthService/systemMetrics stream
-    PingServiceGetStatusOutput:
       content:
         application/json:
           schema:
+            type: object
+            properties: {}
+  responses:
+    PingServiceGetStatusOutput:
+      description: Response for PingService/getStatus procedure
+      content:
+        application/json:
+          schema:
+            type: object
             properties:
-              error:
-                properties:
-                  category:
-                    type: string
-                  code:
-                    type: string
-                  details:
-                    additionalProperties: true
-                    properties: {}
-                    type: object
-                  message:
-                    type: string
-                required:
-                  - message
-                type: object
               ok:
                 type: boolean
               output:
+                type: object
                 properties:
                   status:
                     type: string
@@ -206,66 +106,78 @@ components:
                 required:
                   - status
                   - uptime
+              error:
                 type: object
+                properties:
+                  message:
+                    type: string
+                  category:
+                    type: string
+                  code:
+                    type: string
+                  details:
+                    type: object
+                    properties: {}
+                    additionalProperties: true
+                required:
+                  - message
             required:
               - ok
-            type: object
-      description: Response for PingService/getStatus procedure
     PingServiceLogEventOutput:
-      content:
-        application/json:
-          schema:
-            properties:
-              error:
-                properties:
-                  category:
-                    type: string
-                  code:
-                    type: string
-                  details:
-                    additionalProperties: true
-                    properties: {}
-                    type: object
-                  message:
-                    type: string
-                required:
-                  - message
-                type: object
-              ok:
-                type: boolean
-              output:
-                properties: {}
-                type: object
-            required:
-              - ok
-            type: object
       description: Response for PingService/logEvent procedure
-    PingServicePingOutput:
       content:
         application/json:
           schema:
+            type: object
             properties:
+              ok:
+                type: boolean
+              output:
+                type: object
+                properties: {}
               error:
+                type: object
                 properties:
+                  message:
+                    type: string
                   category:
                     type: string
                   code:
                     type: string
                   details:
-                    additionalProperties: true
-                    properties: {}
                     type: object
-                  message:
-                    type: string
+                    properties: {}
+                    additionalProperties: true
                 required:
                   - message
-                type: object
+            required:
+              - ok
+    PingServicePingOutput:
+      description: Response for PingService/ping procedure
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
               ok:
                 type: boolean
               output:
-                properties: {}
                 type: object
+                properties: {}
+              error:
+                type: object
+                properties:
+                  message:
+                    type: string
+                  category:
+                    type: string
+                  code:
+                    type: string
+                  details:
+                    type: object
+                    properties: {}
+                    additionalProperties: true
+                required:
+                  - message
             required:
               - ok
-            type: object
-      description: Response for PingService/ping procedure

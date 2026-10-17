@@ -19,7 +19,7 @@ type Order {
 }
 
 """ User management service. """
-@rpc
+@httpRpc
 type UserService {
   @proc
   getUser {
@@ -47,7 +47,7 @@ type UserService {
 }
 
 """ Product catalog service. """
-@rpc
+@httpRpc
 type ProductService {
   @proc
   getProduct {
@@ -74,7 +74,7 @@ type ProductService {
 }
 
 """ Order management service. """
-@rpc
+@httpRpc
 type OrderService {
   @proc
   createOrder {

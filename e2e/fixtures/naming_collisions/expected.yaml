@@ -8,92 +8,108 @@ tags:
   - name: KeywordServiceProcedures
     description: Procedures for KeywordService
 paths:
-  /KeywordService/delete:
+  /keywordService/delete:
     post:
+      tags:
+        - KeywordServiceProcedures
       requestBody:
         $ref: "#/components/requestBodies/KeywordServiceDeleteInput"
       responses:
         "200":
           $ref: "#/components/responses/KeywordServiceDeleteOutput"
+  /keywordService/get:
+    post:
       tags:
         - KeywordServiceProcedures
-  /KeywordService/get:
-    post:
       requestBody:
         $ref: "#/components/requestBodies/KeywordServiceGetInput"
       responses:
         "200":
           $ref: "#/components/responses/KeywordServiceGetOutput"
+  /keywordService/post:
+    post:
       tags:
         - KeywordServiceProcedures
-  /KeywordService/post:
-    post:
       requestBody:
         $ref: "#/components/requestBodies/KeywordServicePostInput"
       responses:
         "200":
           $ref: "#/components/responses/KeywordServicePostOutput"
+  /keywordService/testKeywords:
+    post:
       tags:
         - KeywordServiceProcedures
-  /KeywordService/testKeywords:
-    post:
       requestBody:
         $ref: "#/components/requestBodies/KeywordServiceTestKeywordsInput"
       responses:
         "200":
           $ref: "#/components/responses/KeywordServiceTestKeywordsOutput"
-      tags:
-        - KeywordServiceProcedures
 components:
   securitySchemes:
     AuthToken:
-      description: "Enter the full value for the Authorization header. The specific format (Bearer, Basic, API Key, etc.) is determined by the server's implementation.\n\n---\n**Examples:**\n- **Bearer Token:** `Bearer eyJhbGciOiJIUzI1Ni...` (a JWT token)\n- **Basic Auth:** `Basic dXNlcm5hbWU6cGFzc3dvcmQ=` (a base64 encoding of `username:password`)\n- **API Key:** `sk_live_123abc456def` (a raw token)"
+      type: apiKey
       in: header
       name: Authorization
-      type: apiKey
+      description: >-
+        Enter the full value for the Authorization header. The specific format
+        (Bearer, Basic, API Key, etc.) is determined by the server's
+        implementation.
+
+
+        ---
+
+        **Examples:**
+
+        - **Bearer Token:** `Bearer eyJhbGciOiJIUzI1Ni...` (a JWT token)
+
+        - **Basic Auth:** `Basic dXNlcm5hbWU6cGFzc3dvcmQ=` (a base64 encoding of
+        `username:password`)
+
+        - **API Key:** `sk_live_123abc456def` (a raw token)
   schemas:
     EdgeCaseNames:
+      type: object
       properties:
-        a:
-          type: string
-        api:
-          type: string
-        b:
-          type: integer
         camelCase:
-          type: string
-        field1:
-          type: string
-        field2With3Numbers4:
-          type: integer
-        html:
-          type: string
-        http:
-          type: string
-        id:
-          type: string
-        json:
           type: string
         pascalCase:
           type: integer
         snakeCase:
           type: number
-        thisIsAnExtremelyLongFieldNameThatShouldStillWorkCorrectlyInTheGeneratedOpenApiSpec:
+        field1:
           type: string
-        uri:
+        field2With3Numbers4:
+          type: integer
+        a:
+          type: string
+        b:
+          type: integer
+        x:
+          type: number
+        y:
+          type: boolean
+        z:
+          type: string
+          format: date-time
+        id:
           type: string
         url:
           type: string
-        uuid:
+        uri:
           type: string
-        x:
-          type: number
+        api:
+          type: string
+        http:
+          type: string
+        html:
+          type: string
         xml:
           type: string
-        "y":
-          type: boolean
-        z:
-          format: date-time
+        json:
+          type: string
+        uuid:
+          type: string
+        thisIsAnExtremelyLongFieldNameThatShouldStillWorkCorrectlyInTheGeneratedOpenApiSpec:
           type: string
       required:
         - camelCase
@@ -104,7 +120,7 @@ components:
         - a
         - b
         - x
-        - "y"
+        - y
         - z
         - id
         - url
@@ -116,108 +132,108 @@ components:
         - json
         - uuid
         - thisIsAnExtremelyLongFieldNameThatShouldStillWorkCorrectlyInTheGeneratedOpenApiSpec
-      type: object
     Items:
+      type: object
       properties:
         list:
+          type: array
           items:
             type: string
-          type: array
       required:
         - list
-      type: object
     OpenApiKeywords:
+      type: object
       properties:
-        additionalProperties:
-          type: boolean
-        allOf:
+        properties:
           type: integer
-        anyOf:
-          type: number
-        callbacks:
-          type: string
-        content:
-          type: string
-        default:
-          type: string
-        definitions:
-          type: string
-        delete:
-          type: string
-        description:
-          type: string
-        discriminator:
-          type: string
-        example:
-          type: string
-        examples:
-          type: string
-        externalDocs:
-          type: string
-        format:
-          type: string
-        get:
-          type: string
-        head:
-          type: string
-        headers:
-          type: string
-        isDeprecated:
+        required:
           type: boolean
         items:
           type: string
-        maxItems:
+        allOf:
           type: integer
-        maxLength:
-          type: integer
-        maximum:
-          type: integer
-        minItems:
-          type: integer
-        minLength:
-          type: integer
-        minimum:
-          type: integer
-        nullable:
-          type: boolean
         oneOf:
           type: string
-        operationId:
-          type: string
-        options:
-          type: string
-        parameters:
-          type: string
-        patch:
-          type: string
-        post:
-          type: string
-        properties:
-          type: integer
-        put:
-          type: string
-        readOnly:
+        anyOf:
+          type: number
+        additionalProperties:
           type: boolean
-        ref:
-          type: string
-        requestBody:
-          type: string
-        required:
-          type: boolean
-        responses:
+        definitions:
           type: string
         schema:
           type: integer
+        ref:
+          type: string
+        default:
+          type: string
+        format:
+          type: string
+        minimum:
+          type: integer
+        maximum:
+          type: integer
+        minLength:
+          type: integer
+        maxLength:
+          type: integer
+        minItems:
+          type: integer
+        maxItems:
+          type: integer
+        uniqueItems:
+          type: boolean
+        get:
+          type: string
+        post:
+          type: string
+        put:
+          type: string
+        delete:
+          type: string
+        patch:
+          type: string
+        options:
+          type: string
+        head:
+          type: string
+        description:
+          type: string
+        content:
+          type: string
+        headers:
+          type: string
         security:
           type: string
         securitySchemes:
           type: string
+        parameters:
+          type: string
+        requestBody:
+          type: string
+        responses:
+          type: string
+        callbacks:
+          type: string
+        operationId:
+          type: string
+        isDeprecated:
+          type: boolean
         servers:
           type: string
-        uniqueItems:
+        externalDocs:
+          type: string
+        discriminator:
+          type: string
+        readOnly:
           type: boolean
         writeOnly:
           type: boolean
+        nullable:
+          type: boolean
+        example:
+          type: string
+        examples:
+          type: string
       required:
         - properties
         - required
@@ -264,215 +280,214 @@ components:
         - nullable
         - example
         - examples
-      type: object
     Properties:
+      type: object
       properties:
         data:
           type: integer
       required:
         - data
-      type: object
     Responses:
+      type: object
       properties:
         success:
           type: boolean
       required:
         - success
-      type: object
     Schema:
+      type: object
       properties:
         value:
           type: string
       required:
         - value
-      type: object
   requestBodies:
     KeywordServiceDeleteInput:
-      content:
-        application/json:
-          schema:
-            properties:
-              id:
-                type: string
-            required:
-              - id
-            type: object
       description: Request body for KeywordService/delete procedure
-    KeywordServiceGetInput:
       content:
         application/json:
           schema:
+            type: object
             properties:
               id:
                 type: string
             required:
               - id
-            type: object
+    KeywordServiceGetInput:
       description: Request body for KeywordService/get procedure
-    KeywordServicePostInput:
       content:
         application/json:
           schema:
+            type: object
+            properties:
+              id:
+                type: string
+            required:
+              - id
+    KeywordServicePostInput:
+      description: Request body for KeywordService/post procedure
+      content:
+        application/json:
+          schema:
+            type: object
             properties:
               data:
                 type: string
             required:
               - data
-            type: object
-      description: Request body for KeywordService/post procedure
     KeywordServiceTestKeywordsInput:
+      description: Request body for KeywordService/testKeywords procedure
       content:
         application/json:
           schema:
+            type: object
             properties:
-              edgeCases:
-                $ref: "#/components/schemas/EdgeCaseNames"
               keywords:
                 $ref: "#/components/schemas/OpenApiKeywords"
+              edgeCases:
+                $ref: "#/components/schemas/EdgeCaseNames"
             required:
               - keywords
               - edgeCases
-            type: object
-      description: Request body for KeywordService/testKeywords procedure
   responses:
     KeywordServiceDeleteOutput:
+      description: Response for KeywordService/delete procedure
       content:
         application/json:
           schema:
+            type: object
             properties:
-              error:
-                properties:
-                  category:
-                    type: string
-                  code:
-                    type: string
-                  details:
-                    additionalProperties: true
-                    properties: {}
-                    type: object
-                  message:
-                    type: string
-                required:
-                  - message
-                type: object
               ok:
                 type: boolean
               output:
+                type: object
                 properties:
                   deleted:
                     type: boolean
                 required:
                   - deleted
-                type: object
-            required:
-              - ok
-            type: object
-      description: Response for KeywordService/delete procedure
-    KeywordServiceGetOutput:
-      content:
-        application/json:
-          schema:
-            properties:
               error:
+                type: object
                 properties:
+                  message:
+                    type: string
                   category:
                     type: string
                   code:
                     type: string
                   details:
-                    additionalProperties: true
-                    properties: {}
                     type: object
-                  message:
-                    type: string
+                    properties: {}
+                    additionalProperties: true
                 required:
                   - message
-                type: object
+            required:
+              - ok
+    KeywordServiceGetOutput:
+      description: Response for KeywordService/get procedure
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
               ok:
                 type: boolean
               output:
+                type: object
                 properties:
                   data:
                     type: string
                 required:
                   - data
-                type: object
-            required:
-              - ok
-            type: object
-      description: Response for KeywordService/get procedure
-    KeywordServicePostOutput:
-      content:
-        application/json:
-          schema:
-            properties:
               error:
+                type: object
                 properties:
+                  message:
+                    type: string
                   category:
                     type: string
                   code:
                     type: string
                   details:
-                    additionalProperties: true
-                    properties: {}
                     type: object
-                  message:
-                    type: string
+                    properties: {}
+                    additionalProperties: true
                 required:
                   - message
-                type: object
+            required:
+              - ok
+    KeywordServicePostOutput:
+      description: Response for KeywordService/post procedure
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
               ok:
                 type: boolean
               output:
+                type: object
                 properties:
                   id:
                     type: string
                 required:
                   - id
-                type: object
-            required:
-              - ok
-            type: object
-      description: Response for KeywordService/post procedure
-    KeywordServiceTestKeywordsOutput:
-      content:
-        application/json:
-          schema:
-            properties:
               error:
+                type: object
                 properties:
+                  message:
+                    type: string
                   category:
                     type: string
                   code:
                     type: string
                   details:
-                    additionalProperties: true
-                    properties: {}
                     type: object
-                  message:
-                    type: string
+                    properties: {}
+                    additionalProperties: true
                 required:
                   - message
-                type: object
+            required:
+              - ok
+    KeywordServiceTestKeywordsOutput:
+      description: Response for KeywordService/testKeywords procedure
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
               ok:
                 type: boolean
               output:
+                type: object
                 properties:
-                  items:
-                    $ref: "#/components/schemas/Items"
-                  properties:
-                    $ref: "#/components/schemas/Properties"
-                  responses:
-                    $ref: "#/components/schemas/Responses"
                   schema:
                     $ref: "#/components/schemas/Schema"
+                  properties:
+                    $ref: "#/components/schemas/Properties"
+                  items:
+                    $ref: "#/components/schemas/Items"
+                  responses:
+                    $ref: "#/components/schemas/Responses"
                 required:
                   - schema
                   - properties
                   - items
                   - responses
+              error:
                 type: object
+                properties:
+                  message:
+                    type: string
+                  category:
+                    type: string
+                  code:
+                    type: string
+                  details:
+                    type: object
+                    properties: {}
+                    additionalProperties: true
+                required:
+                  - message
             required:
               - ok
-            type: object
-      description: Response for KeywordService/testKeywords procedure

@@ -8,46 +8,62 @@ tags:
   - name: UserServiceProcedures
     description: Procedures for UserService
 paths:
-  /UserService/deleteUser:
+  /userService/deleteUser:
     post:
-      deprecated: true
+      tags:
+        - UserServiceProcedures
       requestBody:
         $ref: "#/components/requestBodies/UserServiceDeleteUserInput"
       responses:
         "200":
           $ref: "#/components/responses/UserServiceDeleteUserOutput"
+      description: "Deprecated: Will be removed in v3.0"
+      deprecated: true
+  /userService/getUser:
+    post:
       tags:
         - UserServiceProcedures
-  /UserService/getUser:
-    post:
-      deprecated: true
       requestBody:
         $ref: "#/components/requestBodies/UserServiceGetUserInput"
       responses:
         "200":
           $ref: "#/components/responses/UserServiceGetUserOutput"
+      description: "Deprecated: Use GetUserV2 instead"
+      deprecated: true
+  /userService/getUserV2:
+    post:
       tags:
         - UserServiceProcedures
-  /UserService/getUserV2:
-    post:
       requestBody:
         $ref: "#/components/requestBodies/UserServiceGetUserV2Input"
       responses:
         "200":
           $ref: "#/components/responses/UserServiceGetUserV2Output"
-      tags:
-        - UserServiceProcedures
 components:
   securitySchemes:
     AuthToken:
-      description: "Enter the full value for the Authorization header. The specific format (Bearer, Basic, API Key, etc.) is determined by the server's implementation.\n\n---\n**Examples:**\n- **Bearer Token:** `Bearer eyJhbGciOiJIUzI1Ni...` (a JWT token)\n- **Basic Auth:** `Basic dXNlcm5hbWU6cGFzc3dvcmQ=` (a base64 encoding of `username:password`)\n- **API Key:** `sk_live_123abc456def` (a raw token)"
+      type: apiKey
       in: header
       name: Authorization
-      type: apiKey
+      description: >-
+        Enter the full value for the Authorization header. The specific format
+        (Bearer, Basic, API Key, etc.) is determined by the server's
+        implementation.
+
+
+        ---
+
+        **Examples:**
+
+        - **Bearer Token:** `Bearer eyJhbGciOiJIUzI1Ni...` (a JWT token)
+
+        - **Basic Auth:** `Basic dXNlcm5hbWU6cGFzc3dvcmQ=` (a base64 encoding of
+        `username:password`)
+
+        - **API Key:** `sk_live_123abc456def` (a raw token)
   schemas:
     User:
-      deprecated: true
-      description: "Deprecated: Use UserV2 instead"
+      type: object
       properties:
         id:
           type: string
@@ -56,151 +72,152 @@ components:
       required:
         - id
         - name
-      type: object
+      deprecated: true
+      description: "Deprecated: Use UserV2 instead"
     UserV2:
+      type: object
       properties:
+        id:
+          type: string
         displayName:
           type: string
         email:
-          type: string
-        id:
           type: string
       required:
         - id
         - displayName
         - email
-      type: object
   requestBodies:
     UserServiceDeleteUserInput:
-      content:
-        application/json:
-          schema:
-            properties:
-              id:
-                type: string
-            required:
-              - id
-            type: object
       description: Request body for UserService/deleteUser procedure
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              id:
+                type: string
+            required:
+              - id
     UserServiceGetUserInput:
-      content:
-        application/json:
-          schema:
-            properties:
-              id:
-                type: string
-            required:
-              - id
-            type: object
       description: Request body for UserService/getUser procedure
-    UserServiceGetUserV2Input:
       content:
         application/json:
           schema:
+            type: object
             properties:
               id:
                 type: string
             required:
               - id
-            type: object
+    UserServiceGetUserV2Input:
       description: Request body for UserService/getUserV2 procedure
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              id:
+                type: string
+            required:
+              - id
   responses:
     UserServiceDeleteUserOutput:
+      description: Response for UserService/deleteUser procedure
       content:
         application/json:
           schema:
+            type: object
             properties:
-              error:
-                properties:
-                  category:
-                    type: string
-                  code:
-                    type: string
-                  details:
-                    additionalProperties: true
-                    properties: {}
-                    type: object
-                  message:
-                    type: string
-                required:
-                  - message
-                type: object
               ok:
                 type: boolean
               output:
+                type: object
                 properties:
                   deleted:
                     type: boolean
                 required:
                   - deleted
-                type: object
-            required:
-              - ok
-            type: object
-      description: Response for UserService/deleteUser procedure
-    UserServiceGetUserOutput:
-      content:
-        application/json:
-          schema:
-            properties:
               error:
+                type: object
                 properties:
+                  message:
+                    type: string
                   category:
                     type: string
                   code:
                     type: string
                   details:
-                    additionalProperties: true
-                    properties: {}
                     type: object
-                  message:
-                    type: string
+                    properties: {}
+                    additionalProperties: true
                 required:
                   - message
-                type: object
+            required:
+              - ok
+    UserServiceGetUserOutput:
+      description: Response for UserService/getUser procedure
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
               ok:
                 type: boolean
               output:
+                type: object
                 properties:
                   user:
                     $ref: "#/components/schemas/User"
                 required:
                   - user
-                type: object
-            required:
-              - ok
-            type: object
-      description: Response for UserService/getUser procedure
-    UserServiceGetUserV2Output:
-      content:
-        application/json:
-          schema:
-            properties:
               error:
+                type: object
                 properties:
+                  message:
+                    type: string
                   category:
                     type: string
                   code:
                     type: string
                   details:
-                    additionalProperties: true
-                    properties: {}
                     type: object
-                  message:
-                    type: string
+                    properties: {}
+                    additionalProperties: true
                 required:
                   - message
-                type: object
+            required:
+              - ok
+    UserServiceGetUserV2Output:
+      description: Response for UserService/getUserV2 procedure
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
               ok:
                 type: boolean
               output:
+                type: object
                 properties:
                   user:
                     $ref: "#/components/schemas/UserV2"
                 required:
                   - user
+              error:
                 type: object
+                properties:
+                  message:
+                    type: string
+                  category:
+                    type: string
+                  code:
+                    type: string
+                  details:
+                    type: object
+                    properties: {}
+                    additionalProperties: true
+                required:
+                  - message
             required:
               - ok
-            type: object
-      description: Response for UserService/getUserV2 procedure

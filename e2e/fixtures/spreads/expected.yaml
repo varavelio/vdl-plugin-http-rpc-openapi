@@ -7,88 +7,93 @@ security:
 tags:
   - name: SpreadServiceProcedures
     description: Procedures for SpreadService
-  - name: SpreadServiceStreams
-    description: Streams for SpreadService
 paths:
-  /SpreadService/complexSpread:
+  /spreadService/complexSpread:
     post:
+      tags:
+        - SpreadServiceProcedures
       requestBody:
         $ref: "#/components/requestBodies/SpreadServiceComplexSpreadInput"
       responses:
         "200":
           $ref: "#/components/responses/SpreadServiceComplexSpreadOutput"
+  /spreadService/createUser:
+    post:
       tags:
         - SpreadServiceProcedures
-  /SpreadService/createUser:
-    post:
       requestBody:
         $ref: "#/components/requestBodies/SpreadServiceCreateUserInput"
       responses:
         "200":
           $ref: "#/components/responses/SpreadServiceCreateUserOutput"
+  /spreadService/listItems:
+    post:
       tags:
         - SpreadServiceProcedures
-  /SpreadService/eventStream:
-    post:
-      requestBody:
-        $ref: "#/components/requestBodies/SpreadServiceEventStreamInput"
-      responses:
-        "200":
-          $ref: "#/components/responses/SpreadServiceEventStreamOutput"
-      tags:
-        - SpreadServiceStreams
-  /SpreadService/listItems:
-    post:
       requestBody:
         $ref: "#/components/requestBodies/SpreadServiceListItemsInput"
       responses:
         "200":
           $ref: "#/components/responses/SpreadServiceListItemsOutput"
+  /spreadService/searchWithMetadata:
+    post:
       tags:
         - SpreadServiceProcedures
-  /SpreadService/searchWithMetadata:
-    post:
       requestBody:
         $ref: "#/components/requestBodies/SpreadServiceSearchWithMetadataInput"
       responses:
         "200":
           $ref: "#/components/responses/SpreadServiceSearchWithMetadataOutput"
-      tags:
-        - SpreadServiceProcedures
 components:
   securitySchemes:
     AuthToken:
-      description: "Enter the full value for the Authorization header. The specific format (Bearer, Basic, API Key, etc.) is determined by the server's implementation.\n\n---\n**Examples:**\n- **Bearer Token:** `Bearer eyJhbGciOiJIUzI1Ni...` (a JWT token)\n- **Basic Auth:** `Basic dXNlcm5hbWU6cGFzc3dvcmQ=` (a base64 encoding of `username:password`)\n- **API Key:** `sk_live_123abc456def` (a raw token)"
+      type: apiKey
       in: header
       name: Authorization
-      type: apiKey
+      description: >-
+        Enter the full value for the Authorization header. The specific format
+        (Bearer, Basic, API Key, etc.) is determined by the server's
+        implementation.
+
+
+        ---
+
+        **Examples:**
+
+        - **Bearer Token:** `Bearer eyJhbGciOiJIUzI1Ni...` (a JWT token)
+
+        - **Basic Auth:** `Basic dXNlcm5hbWU6cGFzc3dvcmQ=` (a base64 encoding of
+        `username:password`)
+
+        - **API Key:** `sk_live_123abc456def` (a raw token)
   schemas:
     Article:
+      type: object
       properties:
-        authorId:
+        id:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+        version:
+          type: integer
+        tags:
+          type: array
+          items:
+            type: string
+        metadata:
+          type: object
+          additionalProperties:
+            type: string
+        title:
           type: string
         body:
           type: string
-        createdAt:
-          format: date-time
+        authorId:
           type: string
-        id:
-          type: string
-        metadata:
-          additionalProperties:
-            type: string
-          type: object
-        tags:
-          items:
-            type: string
-          type: array
-        title:
-          type: string
-        updatedAt:
-          format: date-time
-          type: string
-        version:
-          type: integer
       required:
         - id
         - createdAt
@@ -99,11 +104,23 @@ components:
         - title
         - body
         - authorId
-      type: object
     Collection:
+      type: object
       properties:
-        items:
+        version:
+          type: integer
+        tags:
+          type: array
           items:
+            type: string
+        metadata:
+          type: object
+          additionalProperties:
+            type: string
+        items:
+          type: array
+          items:
+            type: object
             properties:
               id:
                 type: string
@@ -112,259 +129,249 @@ components:
             required:
               - id
               - value
-            type: object
-          type: array
-        metadata:
-          additionalProperties:
-            type: string
-          type: object
-        tags:
-          items:
-            type: string
-          type: array
-        version:
-          type: integer
       required:
         - version
         - tags
         - metadata
         - items
-      type: object
     Comment:
+      type: object
       properties:
+        id:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+        text:
+          type: string
         author:
+          type: object
           properties:
-            avatar:
-              type: string
             id:
               type: string
             name:
               type: string
+            avatar:
+              type: string
           required:
             - id
             - name
-          type: object
-        createdAt:
-          format: date-time
-          type: string
-        id:
-          type: string
-        text:
-          type: string
-        updatedAt:
-          format: date-time
-          type: string
       required:
         - id
         - createdAt
         - updatedAt
         - text
         - author
-      type: object
     DeepSpread:
+      type: object
       properties:
         level1:
+          type: object
           properties:
             id:
               type: string
             level2:
+              type: object
               properties:
                 createdAt:
-                  format: date-time
                   type: string
+                  format: date-time
+                updatedAt:
+                  type: string
+                  format: date-time
                 level3:
+                  type: object
                   properties:
-                    metadata:
-                      additionalProperties:
-                        type: string
-                      type: object
-                    tags:
-                      items:
-                        type: string
-                      type: array
-                    value:
-                      type: string
                     version:
                       type: integer
+                    tags:
+                      type: array
+                      items:
+                        type: string
+                    metadata:
+                      type: object
+                      additionalProperties:
+                        type: string
+                    value:
+                      type: string
                   required:
                     - version
                     - tags
                     - metadata
                     - value
-                  type: object
-                updatedAt:
-                  format: date-time
-                  type: string
               required:
                 - createdAt
                 - updatedAt
                 - level3
-              type: object
           required:
             - id
             - level2
-          type: object
       required:
         - level1
-      type: object
     Identifiable:
+      type: object
       properties:
         id:
           type: string
       required:
         - id
-      type: object
     Metadata:
+      type: object
       properties:
-        metadata:
-          additionalProperties:
-            type: string
-          type: object
-        tags:
-          items:
-            type: string
-          type: array
         version:
           type: integer
+        tags:
+          type: array
+          items:
+            type: string
+        metadata:
+          type: object
+          additionalProperties:
+            type: string
       required:
         - version
         - tags
         - metadata
-      type: object
     OptionalSpread:
+      type: object
       properties:
         id:
+          type: string
+        requiredField:
           type: string
         optionalField:
           type: integer
         optionalObject:
+          type: object
           properties:
             createdAt:
+              type: string
               format: date-time
-              type: string
-            data:
-              type: string
             updatedAt:
+              type: string
               format: date-time
+            data:
               type: string
           required:
             - createdAt
             - updatedAt
             - data
-          type: object
-        requiredField:
-          type: string
       required:
         - id
         - requiredField
-      type: object
     PaginatedResult:
+      type: object
       properties:
-        hasMore:
-          type: boolean
         total:
           type: integer
+        hasMore:
+          type: boolean
       required:
         - total
         - hasMore
-      type: object
     Pagination:
+      type: object
       properties:
+        page:
+          type: integer
         limit:
           type: integer
         offset:
           type: integer
-        page:
-          type: integer
       required:
         - page
         - limit
-      type: object
     Registry:
+      type: object
       properties:
-        entries:
+        version:
+          type: integer
+        tags:
+          type: array
+          items:
+            type: string
+        metadata:
+          type: object
           additionalProperties:
+            type: string
+        entries:
+          type: object
+          additionalProperties:
+            type: object
             properties:
-              createdAt:
-                format: date-time
-                type: string
-              data:
-                type: string
               id:
                 type: string
-              updatedAt:
+              createdAt:
+                type: string
                 format: date-time
+              updatedAt:
+                type: string
+                format: date-time
+              data:
                 type: string
             required:
               - id
               - createdAt
               - updatedAt
               - data
-            type: object
-          type: object
-        metadata:
-          additionalProperties:
-            type: string
-          type: object
-        tags:
-          items:
-            type: string
-          type: array
-        version:
-          type: integer
       required:
         - version
         - tags
         - metadata
         - entries
-      type: object
     SpreadInArrays:
+      type: object
       properties:
         items:
+          type: array
           items:
+            type: object
             properties:
-              createdAt:
-                format: date-time
-                type: string
-              data:
-                type: string
               id:
                 type: string
-              updatedAt:
+              createdAt:
+                type: string
                 format: date-time
+              updatedAt:
+                type: string
+                format: date-time
+              data:
                 type: string
             required:
               - id
               - createdAt
               - updatedAt
               - data
-            type: object
-          type: array
         matrix:
+          type: array
           items:
+            type: array
             items:
+              type: object
               properties:
                 id:
                   type: string
                 x:
                   type: integer
-                "y":
+                y:
                   type: integer
               required:
                 - id
                 - x
-                - "y"
-              type: object
-            type: array
-          type: array
+                - y
       required:
         - items
         - matrix
-      type: object
     SpreadInMaps:
+      type: object
       properties:
         lookup:
+          type: object
           additionalProperties:
+            type: object
             properties:
               id:
                 type: string
@@ -373,64 +380,62 @@ components:
             required:
               - id
               - value
-            type: object
-          type: object
         nested:
+          type: object
           additionalProperties:
+            type: object
             properties:
               createdAt:
-                format: date-time
                 type: string
+                format: date-time
+              updatedAt:
+                type: string
+                format: date-time
               entries:
+                type: array
                 items:
+                  type: object
                   properties:
-                    data:
-                      type: string
                     id:
+                      type: string
+                    data:
                       type: string
                   required:
                     - id
                     - data
-                  type: object
-                type: array
-              updatedAt:
-                format: date-time
-                type: string
             required:
               - createdAt
               - updatedAt
               - entries
-            type: object
-          type: object
       required:
         - lookup
         - nested
-      type: object
     Timestamps:
+      type: object
       properties:
         createdAt:
-          format: date-time
           type: string
+          format: date-time
         updatedAt:
-          format: date-time
           type: string
+          format: date-time
       required:
         - createdAt
         - updatedAt
-      type: object
     User:
+      type: object
       properties:
-        createdAt:
-          format: date-time
-          type: string
-        email:
-          type: string
         id:
           type: string
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
         name:
           type: string
-        updatedAt:
-          format: date-time
+        email:
           type: string
       required:
         - id
@@ -438,139 +443,119 @@ components:
         - updatedAt
         - name
         - email
-      type: object
   requestBodies:
     SpreadServiceComplexSpreadInput:
+      description: Request body for SpreadService/complexSpread procedure
       content:
         application/json:
           schema:
+            type: object
             properties:
               request:
+                type: object
                 properties:
-                  createdAt:
-                    format: date-time
-                    type: string
                   id:
                     type: string
+                  createdAt:
+                    type: string
+                    format: date-time
+                  updatedAt:
+                    type: string
+                    format: date-time
                   payload:
+                    type: object
                     properties:
-                      data:
-                        type: string
-                      metadata:
-                        additionalProperties:
-                          type: string
-                        type: object
-                      tags:
-                        items:
-                          type: string
-                        type: array
                       version:
                         type: integer
+                      tags:
+                        type: array
+                        items:
+                          type: string
+                      metadata:
+                        type: object
+                        additionalProperties:
+                          type: string
+                      data:
+                        type: string
                     required:
                       - version
                       - tags
                       - metadata
                       - data
-                    type: object
-                  updatedAt:
-                    format: date-time
-                    type: string
                 required:
                   - id
                   - createdAt
                   - updatedAt
                   - payload
-                type: object
             required:
               - request
-            type: object
-      description: Request body for SpreadService/complexSpread procedure
     SpreadServiceCreateUserInput:
+      description: Request body for SpreadService/createUser procedure
       content:
         application/json:
           schema:
+            type: object
             properties:
               createdAt:
+                type: string
                 format: date-time
+              updatedAt:
                 type: string
-              email:
-                type: string
+                format: date-time
               name:
                 type: string
-              updatedAt:
-                format: date-time
+              email:
                 type: string
             required:
               - createdAt
               - updatedAt
               - name
               - email
-            type: object
-      description: Request body for SpreadService/createUser procedure
-    SpreadServiceEventStreamInput:
+    SpreadServiceListItemsInput:
+      description: Request body for SpreadService/listItems procedure
       content:
         application/json:
           schema:
+            type: object
             properties:
-              eventTypes:
-                items:
-                  type: string
-                type: array
+              page:
+                type: integer
               limit:
                 type: integer
               offset:
                 type: integer
-              page:
-                type: integer
-            required:
-              - page
-              - limit
-              - eventTypes
-            type: object
-      description: Request body for SpreadService/eventStream stream subscription
-    SpreadServiceListItemsInput:
-      content:
-        application/json:
-          schema:
-            properties:
               filter:
                 type: string
-              limit:
-                type: integer
-              offset:
-                type: integer
-              page:
-                type: integer
               sortBy:
                 type: string
             required:
               - page
               - limit
-            type: object
-      description: Request body for SpreadService/listItems procedure
     SpreadServiceSearchWithMetadataInput:
+      description: Request body for SpreadService/searchWithMetadata procedure
       content:
         application/json:
           schema:
+            type: object
             properties:
-              limit:
-                type: integer
-              metadata:
-                additionalProperties:
-                  type: string
-                type: object
-              offset:
-                type: integer
               page:
                 type: integer
-              query:
-                type: string
-              tags:
-                items:
-                  type: string
-                type: array
+              limit:
+                type: integer
+              offset:
+                type: integer
               version:
                 type: integer
+              tags:
+                type: array
+                items:
+                  type: string
+              metadata:
+                type: object
+                additionalProperties:
+                  type: string
+              query:
+                type: string
             required:
               - page
               - limit
@@ -578,98 +563,84 @@ components:
               - tags
               - metadata
               - query
-            type: object
-      description: Request body for SpreadService/searchWithMetadata procedure
   responses:
     SpreadServiceComplexSpreadOutput:
+      description: Response for SpreadService/complexSpread procedure
       content:
         application/json:
           schema:
+            type: object
             properties:
-              error:
-                properties:
-                  category:
-                    type: string
-                  code:
-                    type: string
-                  details:
-                    additionalProperties: true
-                    properties: {}
-                    type: object
-                  message:
-                    type: string
-                required:
-                  - message
-                type: object
               ok:
                 type: boolean
               output:
+                type: object
                 properties:
                   response:
+                    type: object
                     properties:
                       id:
                         type: string
                       result:
+                        type: object
                         properties:
                           createdAt:
-                            format: date-time
                             type: string
+                            format: date-time
+                          updatedAt:
+                            type: string
+                            format: date-time
                           success:
                             type: boolean
-                          updatedAt:
-                            format: date-time
-                            type: string
                         required:
                           - createdAt
                           - updatedAt
                           - success
-                        type: object
                     required:
                       - id
                       - result
-                    type: object
                 required:
                   - response
-                type: object
-            required:
-              - ok
-            type: object
-      description: Response for SpreadService/complexSpread procedure
-    SpreadServiceCreateUserOutput:
-      content:
-        application/json:
-          schema:
-            properties:
               error:
+                type: object
                 properties:
+                  message:
+                    type: string
                   category:
                     type: string
                   code:
                     type: string
                   details:
-                    additionalProperties: true
-                    properties: {}
                     type: object
-                  message:
-                    type: string
+                    properties: {}
+                    additionalProperties: true
                 required:
                   - message
-                type: object
+            required:
+              - ok
+    SpreadServiceCreateUserOutput:
+      description: Response for SpreadService/createUser procedure
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
               ok:
                 type: boolean
               output:
+                type: object
                 properties:
-                  createdAt:
-                    format: date-time
-                    type: string
-                  email:
-                    type: string
                   id:
                     type: string
+                  createdAt:
+                    type: string
+                    format: date-time
+                  updatedAt:
+                    type: string
+                    format: date-time
                   name:
                     type: string
-                  updatedAt:
-                    format: date-time
+                  email:
                     type: string
                 required:
                   - id
@@ -677,148 +648,113 @@ components:
                   - updatedAt
                   - name
                   - email
-                type: object
-            required:
-              - ok
-            type: object
-      description: Response for SpreadService/createUser procedure
-    SpreadServiceEventStreamOutput:
-      content:
-        text/event-stream:
-          schema:
-            properties:
               error:
+                type: object
                 properties:
+                  message:
+                    type: string
                   category:
                     type: string
                   code:
                     type: string
                   details:
-                    additionalProperties: true
-                    properties: {}
                     type: object
-                  message:
-                    type: string
+                    properties: {}
+                    additionalProperties: true
                 required:
                   - message
-                type: object
-              ok:
-                type: boolean
-              output:
-                properties:
-                  createdAt:
-                    format: date-time
-                    type: string
-                  eventType:
-                    type: string
-                  id:
-                    type: string
-                  payload:
-                    type: string
-                  updatedAt:
-                    format: date-time
-                    type: string
-                required:
-                  - id
-                  - createdAt
-                  - updatedAt
-                  - eventType
-                  - payload
-                type: object
             required:
               - ok
-            type: object
-      description: Server-Sent Events for SpreadService/eventStream stream
     SpreadServiceListItemsOutput:
+      description: Response for SpreadService/listItems procedure
       content:
         application/json:
           schema:
+            type: object
             properties:
-              error:
-                properties:
-                  category:
-                    type: string
-                  code:
-                    type: string
-                  details:
-                    additionalProperties: true
-                    properties: {}
-                    type: object
-                  message:
-                    type: string
-                required:
-                  - message
-                type: object
               ok:
                 type: boolean
               output:
+                type: object
                 properties:
+                  total:
+                    type: integer
                   hasMore:
                     type: boolean
                   items:
+                    type: array
                     items:
                       $ref: "#/components/schemas/Article"
-                    type: array
-                  total:
-                    type: integer
                 required:
                   - total
                   - hasMore
                   - items
-                type: object
-            required:
-              - ok
-            type: object
-      description: Response for SpreadService/listItems procedure
-    SpreadServiceSearchWithMetadataOutput:
-      content:
-        application/json:
-          schema:
-            properties:
               error:
+                type: object
                 properties:
+                  message:
+                    type: string
                   category:
                     type: string
                   code:
                     type: string
                   details:
-                    additionalProperties: true
-                    properties: {}
                     type: object
-                  message:
-                    type: string
+                    properties: {}
+                    additionalProperties: true
                 required:
                   - message
-                type: object
+            required:
+              - ok
+    SpreadServiceSearchWithMetadataOutput:
+      description: Response for SpreadService/searchWithMetadata procedure
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
               ok:
                 type: boolean
               output:
+                type: object
                 properties:
+                  total:
+                    type: integer
                   hasMore:
                     type: boolean
                   results:
+                    type: array
                     items:
+                      type: object
                       properties:
-                        data:
-                          type: string
                         id:
                           type: string
                         score:
                           type: number
+                        data:
+                          type: string
                       required:
                         - id
                         - score
                         - data
-                      type: object
-                    type: array
-                  total:
-                    type: integer
                 required:
                   - total
                   - hasMore
                   - results
+              error:
                 type: object
+                properties:
+                  message:
+                    type: string
+                  category:
+                    type: string
+                  code:
+                    type: string
+                  details:
+                    type: object
+                    properties: {}
+                    additionalProperties: true
+                required:
+                  - message
             required:
               - ok
-            type: object
-      description: Response for SpreadService/searchWithMetadata procedure

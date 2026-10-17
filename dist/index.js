@@ -66,7 +66,7 @@ function toPluginError(error) {
 }
 __name(toPluginError, "toPluginError");
 
-// node_modules/@varavel/vdl-plugin-sdk/dist/_virtual/_@oxc-project_runtime@0.115.0/helpers/typeof.js
+// node_modules/@varavel/vdl-plugin-sdk/dist/_virtual/_@oxc-project_runtime@0.154.0/helpers/esm/typeof.js
 function _typeof(o) {
   "@babel/helpers - typeof";
   return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function(o2) {
@@ -77,7 +77,7 @@ function _typeof(o) {
 }
 __name(_typeof, "_typeof");
 
-// node_modules/@varavel/vdl-plugin-sdk/dist/_virtual/_@oxc-project_runtime@0.115.0/helpers/toPrimitive.js
+// node_modules/@varavel/vdl-plugin-sdk/dist/_virtual/_@oxc-project_runtime@0.154.0/helpers/esm/toPrimitive.js
 function toPrimitive(t, r) {
   if ("object" != _typeof(t) || !t) return t;
   var e = t[Symbol.toPrimitive];
@@ -90,14 +90,14 @@ function toPrimitive(t, r) {
 }
 __name(toPrimitive, "toPrimitive");
 
-// node_modules/@varavel/vdl-plugin-sdk/dist/_virtual/_@oxc-project_runtime@0.115.0/helpers/toPropertyKey.js
+// node_modules/@varavel/vdl-plugin-sdk/dist/_virtual/_@oxc-project_runtime@0.154.0/helpers/esm/toPropertyKey.js
 function toPropertyKey(t) {
   var i = toPrimitive(t, "string");
   return "symbol" == _typeof(i) ? i : i + "";
 }
 __name(toPropertyKey, "toPropertyKey");
 
-// node_modules/@varavel/vdl-plugin-sdk/dist/_virtual/_@oxc-project_runtime@0.115.0/helpers/defineProperty.js
+// node_modules/@varavel/vdl-plugin-sdk/dist/_virtual/_@oxc-project_runtime@0.154.0/helpers/esm/defineProperty.js
 function _defineProperty(e, r, t) {
   return (r = toPropertyKey(r)) in e ? Object.defineProperty(e, r, {
     value: t,
@@ -108,7 +108,7 @@ function _defineProperty(e, r, t) {
 }
 __name(_defineProperty, "_defineProperty");
 
-// node_modules/@varavel/vdl-plugin-sdk/dist/_virtual/_@oxc-project_runtime@0.115.0/helpers/objectSpread2.js
+// node_modules/@varavel/vdl-plugin-sdk/dist/_virtual/_@oxc-project_runtime@0.154.0/helpers/esm/objectSpread2.js
 function ownKeys(e, r) {
   var t = Object.keys(e);
   if (Object.getOwnPropertySymbols) {
@@ -133,41 +133,44 @@ function _objectSpread2(e) {
 }
 __name(_objectSpread2, "_objectSpread2");
 
-// node_modules/@varavel/vdl-plugin-sdk/dist/utils/rpc/assert-valid-ir-for-rpc.js
-var RPC_ANNOTATION_NAME = "rpc";
+// node_modules/@varavel/vdl-plugin-sdk/dist/utils/rpc/assert-valid-ir-for-http-rpc.js
+var HTTP_RPC_ANNOTATION_NAME = "httpRpc";
 var PROC_ANNOTATION_NAME = "proc";
-var STREAM_ANNOTATION_NAME = "stream";
-function assertValidIrForRpc(ir) {
+function assertValidIrForHttpRpc(ir) {
   const rpcTypes = ir.types.filter((typeDef) => {
-    return hasAnnotation(typeDef.annotations, RPC_ANNOTATION_NAME);
+    return hasAnnotation(typeDef.annotations, HTTP_RPC_ANNOTATION_NAME);
   });
-  for (const rpcType of rpcTypes) assertValidRpcType(rpcType);
+  for (const rpcType of rpcTypes) assertValidHttpRpcType(rpcType);
 }
-__name(assertValidIrForRpc, "assertValidIrForRpc");
-function assertValidRpcType(typeDef) {
+__name(assertValidIrForHttpRpc, "assertValidIrForHttpRpc");
+function assertValidHttpRpcType(typeDef) {
   var _typeDef$typeRef$obje;
-  assert(typeDef.typeRef.kind === "object", `Type ${JSON.stringify(typeDef.name)} is annotated with @rpc and must be an object type.`, typeDef.position);
+  const rpcAnnotation = findAnnotation(typeDef.annotations, HTTP_RPC_ANNOTATION_NAME);
+  if ((rpcAnnotation === null || rpcAnnotation === void 0 ? void 0 : rpcAnnotation.argument) !== void 0) fail(`Type ${JSON.stringify(typeDef.name)} annotation @httpRpc must not have arguments.`, rpcAnnotation.position);
+  assert(typeDef.typeRef.kind === "object", `Type ${JSON.stringify(typeDef.name)} is annotated with @httpRpc and must be an object type.`, typeDef.position);
   const fields = (_typeDef$typeRef$obje = typeDef.typeRef.objectFields) !== null && _typeDef$typeRef$obje !== void 0 ? _typeDef$typeRef$obje : [];
-  for (const field of fields) assertValidRpcOperationField(typeDef, field);
+  for (const field of fields) assertValidHttpRpcOperationField(typeDef, field);
 }
-__name(assertValidRpcType, "assertValidRpcType");
-function assertValidRpcOperationField(rpcType, field) {
-  const hasProc = hasAnnotation(field.annotations, PROC_ANNOTATION_NAME);
-  const hasStream = hasAnnotation(field.annotations, STREAM_ANNOTATION_NAME);
-  if (!hasProc && !hasStream) return;
-  if (hasProc && hasStream) fail(`Field ${JSON.stringify(`${rpcType.name}.${field.name}`)} cannot be annotated with both @proc and @stream.`, field.position);
-  const operationAnnotation = hasProc ? PROC_ANNOTATION_NAME : STREAM_ANNOTATION_NAME;
-  assert(field.typeRef.kind === "object", `Field ${JSON.stringify(`${rpcType.name}.${field.name}`)} is annotated with @${operationAnnotation} and must be an object type.`, field.position);
+__name(assertValidHttpRpcType, "assertValidHttpRpcType");
+function assertValidHttpRpcOperationField(rpcType, field) {
+  const procAnnotation = findAnnotation(field.annotations, PROC_ANNOTATION_NAME);
+  if (!procAnnotation) return;
+  if (procAnnotation.argument !== void 0) fail(`Field ${JSON.stringify(`${rpcType.name}.${field.name}`)} annotation @proc must not have arguments.`, procAnnotation.position);
+  assert(field.typeRef.kind === "object", `Field ${JSON.stringify(`${rpcType.name}.${field.name}`)} is annotated with @proc and must be an inline object type.`, field.position);
   const inputField = findFieldByName(field.typeRef.objectFields, "input");
   const outputField = findFieldByName(field.typeRef.objectFields, "output");
-  if (inputField && inputField.typeRef.kind !== "object") fail(`Field "input" in operation ${JSON.stringify(`${rpcType.name}.${field.name}`)} must be an object type when present.`, withFallbackFile(inputField.position, field.position));
-  if (outputField && outputField.typeRef.kind !== "object") fail(`Field "output" in operation ${JSON.stringify(`${rpcType.name}.${field.name}`)} must be an object type when present.`, withFallbackFile(outputField.position, field.position));
+  if (inputField && inputField.typeRef.kind !== "object") fail(`Field "input" in operation ${JSON.stringify(`${rpcType.name}.${field.name}`)} must be an inline object type when present.`, withFallbackFile(inputField.position, field.position));
+  if (outputField && outputField.typeRef.kind !== "object") fail(`Field "output" in operation ${JSON.stringify(`${rpcType.name}.${field.name}`)} must be an inline object type when present.`, withFallbackFile(outputField.position, field.position));
 }
-__name(assertValidRpcOperationField, "assertValidRpcOperationField");
+__name(assertValidHttpRpcOperationField, "assertValidHttpRpcOperationField");
 function hasAnnotation(annotations, name) {
   return annotations.some((annotation) => annotation.name === name);
 }
 __name(hasAnnotation, "hasAnnotation");
+function findAnnotation(annotations, name) {
+  return annotations.find((annotation) => annotation.name === name);
+}
+__name(findAnnotation, "findAnnotation");
 function findFieldByName(fields, name) {
   return fields === null || fields === void 0 ? void 0 : fields.find((field) => field.name === name);
 }
@@ -287,7 +290,7 @@ function warn(logLevel, warning) {
 }
 __name(warn, "warn");
 
-// node_modules/@varavel/vdl-plugin-sdk/dist/_virtual/_@oxc-project_runtime@0.115.0/helpers/asyncToGenerator.js
+// node_modules/@varavel/vdl-plugin-sdk/dist/_virtual/_@oxc-project_runtime@0.154.0/helpers/esm/asyncToGenerator.js
 function asyncGeneratorStep(n, t, e, r, o, a, c) {
   try {
     var i = n[a](c), u = i.value;
@@ -447,9 +450,10 @@ __name(callVisitor, "callVisitor");
 function replaceNode(key, path, node) {
   const parent = path[path.length - 1];
   if (isCollection(parent)) parent.items[key] = node;
-  else if (isPair(parent)) if (key === "key") parent.key = node;
-  else parent.value = node;
-  else if (isDocument(parent)) parent.contents = node;
+  else if (isPair(parent)) {
+    if (key === "key") parent.key = node;
+    else parent.value = node;
+  } else if (isDocument(parent)) parent.contents = node;
   else {
     const pt = isAlias(parent) ? "alias" : "scalar";
     throw new Error(`Cannot replace node with ${pt} parent`);
@@ -497,7 +501,6 @@ var Directives = (_a2 = class {
           version: "1.2"
         };
         this.tags = Object.assign({}, _a2.defaultTags);
-        break;
     }
     return res;
   }
@@ -568,7 +571,7 @@ var Directives = (_a2 = class {
       if (source[source.length - 1] !== ">") onError("Verbatim tags must end with a >");
       return verbatim;
     }
-    const [, handle, suffix] = source.match(/* @__PURE__ */ new RegExp("^(.*!)([^!]*)$", "s"));
+    const [, handle, suffix] = source.match(new RegExp("^(.*!)([^!]*)$", "s"));
     if (!suffix) onError(`The ${source} tag has no suffix`);
     const prefix = this.tags[handle];
     if (prefix) try {
@@ -650,6 +653,11 @@ function createNodeAnchors(doc, prefix) {
       prevAnchors.add(anchor);
       return anchor;
     }, "onAnchor"),
+    /**
+    * With circular references, the source node is only resolved after all
+    * of its child nodes are. This is why anchors are set only after all of
+    * the nodes have been created.
+    */
     setAnchors: /* @__PURE__ */ __name(() => {
       for (const source of aliasObjects) {
         const ref = sourceObjects.get(source);
@@ -668,30 +676,32 @@ __name(createNodeAnchors, "createNodeAnchors");
 
 // node_modules/@varavel/vdl-plugin-sdk/dist/node_modules/yaml/browser/dist/doc/applyReviver.js
 function applyReviver(reviver, obj, key, val) {
-  if (val && typeof val === "object") if (Array.isArray(val)) for (let i = 0, len = val.length; i < len; ++i) {
-    const v0 = val[i];
-    const v1 = applyReviver(reviver, val, String(i), v0);
-    if (v1 === void 0) delete val[i];
-    else if (v1 !== v0) val[i] = v1;
-  }
-  else if (val instanceof Map) for (const k of Array.from(val.keys())) {
-    const v0 = val.get(k);
-    const v1 = applyReviver(reviver, val, k, v0);
-    if (v1 === void 0) val.delete(k);
-    else if (v1 !== v0) val.set(k, v1);
-  }
-  else if (val instanceof Set) for (const v0 of Array.from(val)) {
-    const v1 = applyReviver(reviver, val, v0, v0);
-    if (v1 === void 0) val.delete(v0);
-    else if (v1 !== v0) {
-      val.delete(v0);
-      val.add(v1);
+  if (val && typeof val === "object") {
+    if (Array.isArray(val)) for (let i = 0, len = val.length; i < len; ++i) {
+      const v0 = val[i];
+      const v1 = applyReviver(reviver, val, String(i), v0);
+      if (v1 === void 0) delete val[i];
+      else if (v1 !== v0) val[i] = v1;
     }
-  }
-  else for (const [k, v0] of Object.entries(val)) {
-    const v1 = applyReviver(reviver, val, k, v0);
-    if (v1 === void 0) delete val[k];
-    else if (v1 !== v0) val[k] = v1;
+    else if (val instanceof Map) for (const k of Array.from(val.keys())) {
+      const v0 = val.get(k);
+      const v1 = applyReviver(reviver, val, k, v0);
+      if (v1 === void 0) val.delete(k);
+      else if (v1 !== v0) val.set(k, v1);
+    }
+    else if (val instanceof Set) for (const v0 of Array.from(val)) {
+      const v1 = applyReviver(reviver, val, v0, v0);
+      if (v1 === void 0) val.delete(v0);
+      else if (v1 !== v0) {
+        val.delete(v0);
+        val.add(v1);
+      }
+    }
+    else for (const [k, v0] of Object.entries(val)) {
+      const v1 = applyReviver(reviver, val, k, v0);
+      if (v1 === void 0) delete val[k];
+      else if (v1 !== v0) val[k] = v1;
+    }
   }
   return reviver.call(obj, key, val);
 }
@@ -765,6 +775,7 @@ var Alias = (_a4 = class extends NodeBase {
   * instance of the `source` anchor before this node.
   */
   resolve(doc, ctx) {
+    if ((ctx === null || ctx === void 0 ? void 0 : ctx.maxAliasCount) === 0) throw new ReferenceError("Alias resolution is disabled");
     let nodes;
     if (ctx === null || ctx === void 0 ? void 0 : ctx.aliasResolveCache) nodes = ctx.aliasResolveCache;
     else {
@@ -779,28 +790,30 @@ var Alias = (_a4 = class extends NodeBase {
       if (node === this) break;
       if (node.anchor === this.source) found = node;
     }
+    if (found && ctx) {
+      const { anchors, doc: doc2, maxAliasCount } = ctx;
+      let data = anchors.get(found);
+      if (!data) {
+        toJS(found, null, ctx);
+        data = anchors.get(found);
+      }
+      if ((data === null || data === void 0 ? void 0 : data.res) === void 0) throw new ReferenceError("This should not happen: Alias anchor was not resolved?");
+      if (maxAliasCount >= 0) {
+        data.count += 1;
+        if (data.aliasCount === 0) data.aliasCount = getAliasCount(doc2, found, anchors);
+        if (data.count * data.aliasCount > maxAliasCount) throw new ReferenceError("Excessive alias count indicates a resource exhaustion attack");
+      }
+    }
     return found;
   }
   toJSON(_arg, ctx) {
     if (!ctx) return { source: this.source };
-    const { anchors, doc, maxAliasCount } = ctx;
-    const source = this.resolve(doc, ctx);
+    const source = this.resolve(ctx.doc, ctx);
     if (!source) {
       const msg = `Unresolved alias (the anchor must be set before the alias): ${this.source}`;
       throw new ReferenceError(msg);
     }
-    let data = anchors.get(source);
-    if (!data) {
-      toJS(source, null, ctx);
-      data = anchors.get(source);
-    }
-    if ((data === null || data === void 0 ? void 0 : data.res) === void 0) throw new ReferenceError("This should not happen: Alias anchor was not resolved?");
-    if (maxAliasCount >= 0) {
-      data.count += 1;
-      if (data.aliasCount === 0) data.aliasCount = getAliasCount(doc, source, anchors);
-      if (data.count * data.aliasCount > maxAliasCount) throw new ReferenceError("Excessive alias count indicates a resource exhaustion attack");
-    }
-    return data.res;
+    return ctx.anchors.get(source).res;
   }
   toString(ctx, _onComment, _onChompKeep) {
     const src = `*${this.source}`;
@@ -1059,8 +1072,10 @@ function foldFlowLines(text, indent, mode = "flow", { indentAtStart, lineWidth =
   const folds = [];
   const escapedFolds = {};
   let end = lineWidth - indent.length;
-  if (typeof indentAtStart === "number") if (indentAtStart > lineWidth - Math.max(2, minContentWidth)) folds.push(0);
-  else end = lineWidth - indentAtStart;
+  if (typeof indentAtStart === "number") {
+    if (indentAtStart > lineWidth - Math.max(2, minContentWidth)) folds.push(0);
+    else end = lineWidth - indentAtStart;
+  }
   let split = void 0;
   let prev = void 0;
   let overflow = false;
@@ -1098,23 +1113,25 @@ function foldFlowLines(text, indent, mode = "flow", { indentAtStart, lineWidth =
         const next = text[i + 1];
         if (next && next !== " " && next !== "\n" && next !== "	") split = i;
       }
-      if (i >= end) if (split) {
-        folds.push(split);
-        end = split + endStep;
-        split = void 0;
-      } else if (mode === "quoted") {
-        while (prev === " " || prev === "	") {
-          prev = ch;
-          ch = text[i += 1];
-          overflow = true;
-        }
-        const j = i > escEnd + 1 ? i - 2 : escStart - 1;
-        if (escapedFolds[j]) return text;
-        folds.push(j);
-        escapedFolds[j] = true;
-        end = j + endStep;
-        split = void 0;
-      } else overflow = true;
+      if (i >= end) {
+        if (split) {
+          folds.push(split);
+          end = split + endStep;
+          split = void 0;
+        } else if (mode === "quoted") {
+          while (prev === " " || prev === "	") {
+            prev = ch;
+            ch = text[i += 1];
+            overflow = true;
+          }
+          const j = i > escEnd + 1 ? i - 2 : escStart - 1;
+          if (escapedFolds[j]) return text;
+          folds.push(j);
+          escapedFolds[j] = true;
+          end = j + endStep;
+          split = void 0;
+        } else overflow = true;
+      }
     }
     prev = ch;
   }
@@ -1272,7 +1289,7 @@ function quotedString(value, ctx) {
 __name(quotedString, "quotedString");
 var blockEndNewlines;
 try {
-  blockEndNewlines = /* @__PURE__ */ new RegExp("(^|(?<!\n))\n+(?!\n|$)", "g");
+  blockEndNewlines = new RegExp("(^|(?<!\n))\n+(?!\n|$)", "g");
 } catch (_unused) {
   blockEndNewlines = /\n+(?!\n|$)/g;
 }
@@ -1616,14 +1633,14 @@ var merge = {
 };
 var isMergeKey = /* @__PURE__ */ __name((ctx, key) => (merge.identify(key) || isScalar(key) && (!key.type || key.type === Scalar.PLAIN) && merge.identify(key.value)) && (ctx === null || ctx === void 0 ? void 0 : ctx.doc.schema.tags.some((tag) => tag.tag === merge.tag && tag.default)), "isMergeKey");
 function addMergeToJSMap(ctx, map2, value) {
-  value = ctx && isAlias(value) ? value.resolve(ctx.doc) : value;
-  if (isSeq(value)) for (const it of value.items) mergeValue(ctx, map2, it);
-  else if (Array.isArray(value)) for (const it of value) mergeValue(ctx, map2, it);
-  else mergeValue(ctx, map2, value);
+  const source = resolveAliasValue(ctx, value);
+  if (isSeq(source)) for (const it of source.items) mergeValue(ctx, map2, it);
+  else if (Array.isArray(source)) for (const it of source) mergeValue(ctx, map2, it);
+  else mergeValue(ctx, map2, source);
 }
 __name(addMergeToJSMap, "addMergeToJSMap");
 function mergeValue(ctx, map2, value) {
-  const source = ctx && isAlias(value) ? value.resolve(ctx.doc) : value;
+  const source = resolveAliasValue(ctx, value);
   if (!isMap(source)) throw new Error("Merge sources must be maps or map aliases");
   const srcMap = source.toJSON(null, ctx, Map);
   for (const [key, value2] of srcMap) if (map2 instanceof Map) {
@@ -1638,6 +1655,10 @@ function mergeValue(ctx, map2, value) {
   return map2;
 }
 __name(mergeValue, "mergeValue");
+function resolveAliasValue(ctx, value) {
+  return ctx && isAlias(value) ? value.resolve(ctx.doc, ctx) : value;
+}
+__name(resolveAliasValue, "resolveAliasValue");
 
 // node_modules/@varavel/vdl-plugin-sdk/dist/node_modules/yaml/browser/dist/nodes/addPairToJSMap.js
 function addPairToJSMap(ctx, map2, { key, value }) {
@@ -1703,7 +1724,8 @@ var Pair = (_a7 = class {
     return new _a7(key, value);
   }
   toJSON(_, ctx) {
-    return addPairToJSMap(ctx, (ctx === null || ctx === void 0 ? void 0 : ctx.mapAsMap) ? /* @__PURE__ */ new Map() : {}, this);
+    const pair = (ctx === null || ctx === void 0 ? void 0 : ctx.mapAsMap) ? /* @__PURE__ */ new Map() : {};
+    return addPairToJSMap(ctx, pair, this);
   }
   toString(ctx, onComment, onChompKeep) {
     return (ctx === null || ctx === void 0 ? void 0 : ctx.doc) ? stringifyPair(this, ctx, onComment, onChompKeep) : JSON.stringify(this);
@@ -2103,7 +2125,7 @@ function stringifyNumber({ format, minFractionDigits, tag, value }) {
   const num = typeof value === "number" ? value : Number(value);
   if (!isFinite(num)) return isNaN(num) ? ".nan" : num < 0 ? "-.inf" : ".inf";
   let n = Object.is(value, -0) ? "-0" : JSON.stringify(value);
-  if (!format && minFractionDigits && (!tag || tag === "tag:yaml.org,2002:float") && /^\d/.test(n)) {
+  if (!format && minFractionDigits && (!tag || tag === "tag:yaml.org,2002:float") && /^-?\d/.test(n) && !n.includes("e")) {
     let i = n.indexOf(".");
     if (i < 0) {
       i = n.length;
@@ -2265,6 +2287,14 @@ var binary = {
   identify: /* @__PURE__ */ __name((value) => value instanceof Uint8Array, "identify"),
   default: false,
   tag: "tag:yaml.org,2002:binary",
+  /**
+  * Returns a Buffer in node and an Uint8Array in browsers
+  *
+  * To use the resulting buffer as an image, you'll want to do something like:
+  *
+  *   const blob = new Blob([buffer], { type: 'image/jpeg' })
+  *   document.querySelector('#photo').src = URL.createObjectURL(blob)
+  */
   resolve(src, onError) {
     if (typeof atob === "function") {
       const str = atob(src.replace(/[\n\r]/g, ""));
@@ -2334,11 +2364,12 @@ function createPairs(schema4, iterable, ctx) {
   if (iterable && Symbol.iterator in Object(iterable)) for (let it of iterable) {
     if (typeof replacer === "function") it = replacer.call(iterable, String(i++), it);
     let key, value;
-    if (Array.isArray(it)) if (it.length === 2) {
-      key = it[0];
-      value = it[1];
-    } else throw new TypeError(`Expected [key, value] tuple: ${it}`);
-    else if (it && it instanceof Object) {
+    if (Array.isArray(it)) {
+      if (it.length === 2) {
+        key = it[0];
+        value = it[1];
+      } else throw new TypeError(`Expected [key, value] tuple: ${it}`);
+    } else if (it && it instanceof Object) {
       const keys = Object.keys(it);
       if (keys.length === 1) {
         key = keys[0];
@@ -2406,8 +2437,10 @@ var omap = {
   resolve(seq2, onError) {
     const pairs2 = resolvePairs(seq2, onError);
     const seenKeys = [];
-    for (const { key } of pairs2.items) if (isScalar(key)) if (seenKeys.includes(key.value)) onError(`Ordered maps must not include duplicate keys: ${key.value}`);
-    else seenKeys.push(key.value);
+    for (const { key } of pairs2.items) if (isScalar(key)) {
+      if (seenKeys.includes(key.value)) onError(`Ordered maps must not include duplicate keys: ${key.value}`);
+      else seenKeys.push(key.value);
+    }
     return Object.assign(new YAMLOMap(), pairs2);
   },
   createNode: /* @__PURE__ */ __name((schema4, iterable, ctx) => YAMLOMap.from(schema4, iterable, ctx), "createNode")
@@ -2468,9 +2501,10 @@ var set = {
   tag: "tag:yaml.org,2002:set",
   createNode: /* @__PURE__ */ __name((schema4, iterable, ctx) => YAMLSet.from(schema4, iterable, ctx), "createNode"),
   resolve(map2, onError) {
-    if (isMap(map2)) if (map2.hasAllNullValues(true)) return Object.assign(new YAMLSet(), map2);
-    else onError("Set items must all have null values");
-    else onError("Expected a mapping for this tag");
+    if (isMap(map2)) {
+      if (map2.hasAllNullValues(true)) return Object.assign(new YAMLSet(), map2);
+      else onError("Set items must all have null values");
+    } else onError("Expected a mapping for this tag");
     return map2;
   }
 };
@@ -2628,7 +2662,6 @@ function intResolve2(str, offset, radix, { intAsBigInt }) {
         break;
       case 16:
         str = `0x${str}`;
-        break;
     }
     const n2 = BigInt(str);
     return sign === "-" ? BigInt(-1) * n2 : n2;
@@ -2751,10 +2784,12 @@ function getTags(customTags, schemaName, addMergeTag) {
   const schemaTags = schemas.get(schemaName);
   if (schemaTags && !customTags) return addMergeTag && !schemaTags.includes(merge) ? schemaTags.concat(merge) : schemaTags.slice();
   let tags = schemaTags;
-  if (!tags) if (Array.isArray(customTags)) tags = [];
-  else {
-    const keys = Array.from(schemas.keys()).filter((key) => key !== "yaml11").map((key) => JSON.stringify(key)).join(", ");
-    throw new Error(`Unknown schema "${schemaName}"; use one of ${keys} or define customTags array`);
+  if (!tags) {
+    if (Array.isArray(customTags)) tags = [];
+    else {
+      const keys = Array.from(schemas.keys()).filter((key) => key !== "yaml11").map((key) => JSON.stringify(key)).join(", ");
+      throw new Error(`Unknown schema "${schemaName}"; use one of ${keys} or define customTags array`);
+    }
   }
   if (Array.isArray(customTags)) for (const tag of customTags) tags = tags.concat(tag);
   else if (typeof customTags === "function") tags = customTags(tags.slice());
@@ -2832,14 +2867,15 @@ function stringifyDocument(doc, options) {
     if ((body[0] === "|" || body[0] === ">") && lines[lines.length - 1] === "---") lines[lines.length - 1] = `--- ${body}`;
     else lines.push(body);
   } else lines.push(stringify(doc.contents, ctx));
-  if ((_doc$directives = doc.directives) === null || _doc$directives === void 0 ? void 0 : _doc$directives.docEnd) if (doc.comment) {
-    const cs = commentString(doc.comment);
-    if (cs.includes("\n")) {
-      lines.push("...");
-      lines.push(indentComment(cs, ""));
-    } else lines.push(`... ${cs}`);
-  } else lines.push("...");
-  else {
+  if ((_doc$directives = doc.directives) === null || _doc$directives === void 0 ? void 0 : _doc$directives.docEnd) {
+    if (doc.comment) {
+      const cs = commentString(doc.comment);
+      if (cs.includes("\n")) {
+        lines.push("...");
+        lines.push(indentComment(cs, ""));
+      } else lines.push(`... ${cs}`);
+    } else lines.push("...");
+  } else {
     let dc = doc.comment;
     if (dc && chompKeep) dc = dc.replace(/^\n+/, "");
     if (dc) {
@@ -2963,7 +2999,9 @@ var Document = (_a13 = class {
   * recursively wrapping all values as `Scalar` or `Collection` nodes.
   */
   createPair(key, value, options = {}) {
-    return new Pair(this.createNode(key, null, options), this.createNode(value, null, options));
+    const k = this.createNode(key, null, options);
+    const v = this.createNode(value, null, options);
+    return new Pair(k, v);
   }
   /**
   * Removes a value from the document.
@@ -3261,7 +3299,7 @@ function optionalStrOption(options, key) {
 __name(optionalStrOption, "optionalStrOption");
 
 // raw-file:/workspaces/vdl-plugin-http-rpc-openapi/src/playground-elements.html
-var playground_elements_default = '<!doctype html>\n<html lang="en">\n  <head>\n    <meta charset="utf-8" />\n    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />\n    <title>%TITLE%</title>\n    <script\n      src="https://cdn.jsdelivr.net/npm/@stoplight/elements@9.0.19/web-components.min.js"\n      crossorigin\n    ></script>\n    <link\n      rel="stylesheet"\n      href="https://cdn.jsdelivr.net/npm/@stoplight/elements@9.0.19/styles.min.css"\n      crossorigin\n    />\n  </head>\n  <body>\n    <elements-api id="docs" router="hash" layout="sidebar"></elements-api>\n    <script>\n      const OPENAPI_SPEC = %OPENAPI_SPEC%;\n      const docs = document.getElementById("docs");\n      docs.apiDescriptionDocument = OPENAPI_SPEC;\n    </script>\n  </body>\n</html>\n';
+var playground_elements_default = '<!doctype html>\n<html lang="en">\n  <head>\n    <meta charset="utf-8" />\n    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />\n    <title>%TITLE%</title>\n    <script\n      src="https://cdn.jsdelivr.net/npm/@stoplight/elements@9.0.28/web-components.min.js"\n      crossorigin\n    ></script>\n    <link\n      rel="stylesheet"\n      href="https://cdn.jsdelivr.net/npm/@stoplight/elements@9.0.28/styles.min.css"\n      crossorigin\n    />\n  </head>\n  <body>\n    <elements-api id="docs" router="hash" layout="sidebar"></elements-api>\n    <script>\n      const OPENAPI_SPEC = %OPENAPI_SPEC%;\n      const docs = document.getElementById("docs");\n      docs.apiDescriptionDocument = OPENAPI_SPEC;\n    </script>\n  </body>\n</html>\n';
 
 // raw-file:/workspaces/vdl-plugin-http-rpc-openapi/src/playground-scalar.html
 var playground_scalar_default = `<!doctype html>
@@ -3274,7 +3312,7 @@ var playground_scalar_default = `<!doctype html>
   <body>
     <div id="app"></div>
     <script
-      src="https://cdn.jsdelivr.net/npm/@scalar/api-reference@1.55.1/dist/browser/standalone.js"
+      src="https://cdn.jsdelivr.net/npm/@scalar/api-reference@1.75.0/dist/browser/standalone.js"
       crossorigin
     ></script>
     <script>
@@ -3287,7 +3325,7 @@ var playground_scalar_default = `<!doctype html>
 `;
 
 // raw-file:/workspaces/vdl-plugin-http-rpc-openapi/src/playground-swagger.html
-var playground_swagger_default = '<!doctype html>\n<html lang="en">\n  <head>\n    <meta charset="utf-8" />\n    <title>%TITLE%</title>\n    <meta name="viewport" content="width=device-width, initial-scale=1" />\n    <link\n      rel="stylesheet"\n      href="https://cdn.jsdelivr.net/npm/swagger-ui-dist@5.32.5/swagger-ui.css"\n      crossorigin\n    />\n    <style>\n      body {\n        margin: 0;\n      }\n    </style>\n  </head>\n  <body>\n    <div id="swagger-ui"></div>\n    <script\n      src="https://cdn.jsdelivr.net/npm/swagger-ui-dist@5.32.5/swagger-ui-bundle.js"\n      crossorigin\n    ></script>\n    <script>\n      const OPENAPI_SPEC = %OPENAPI_SPEC%;\n      window.ui = SwaggerUIBundle({\n        spec: OPENAPI_SPEC,\n        dom_id: "#swagger-ui",\n        deepLinking: true,\n        tryItOutEnabled: true,\n        displayRequestDuration: true,\n        filter: true,\n        persistAuthorization: true,\n        presets: [SwaggerUIBundle.presets.apis],\n        layout: "BaseLayout",\n      });\n    </script>\n  </body>\n</html>\n';
+var playground_swagger_default = '<!doctype html>\n<html lang="en">\n  <head>\n    <meta charset="utf-8" />\n    <title>%TITLE%</title>\n    <meta name="viewport" content="width=device-width, initial-scale=1" />\n    <link\n      rel="stylesheet"\n      href="https://cdn.jsdelivr.net/npm/swagger-ui-dist@5.33.3/swagger-ui.css"\n      crossorigin\n    />\n    <style>\n      body {\n        margin: 0;\n      }\n    </style>\n  </head>\n  <body>\n    <div id="swagger-ui"></div>\n    <script\n      src="https://cdn.jsdelivr.net/npm/swagger-ui-dist@5.33.3/swagger-ui-bundle.js"\n      crossorigin\n    ></script>\n    <script>\n      const OPENAPI_SPEC = %OPENAPI_SPEC%;\n      window.ui = SwaggerUIBundle({\n        spec: OPENAPI_SPEC,\n        dom_id: "#swagger-ui",\n        deepLinking: true,\n        tryItOutEnabled: true,\n        displayRequestDuration: true,\n        filter: true,\n        persistAuthorization: true,\n        presets: [SwaggerUIBundle.presets.apis],\n        layout: "BaseLayout",\n      });\n    </script>\n  </body>\n</html>\n';
 
 // node_modules/@varavel/vdl-plugin-sdk/dist/utils/ir/get-annotation.js
 function getAnnotation(annotations, name) {
@@ -3295,6 +3333,27 @@ function getAnnotation(annotations, name) {
   return annotations.find((anno) => anno.name === name);
 }
 __name(getAnnotation, "getAnnotation");
+
+// node_modules/@varavel/vdl-plugin-sdk/dist/utils/ir/get-annotation-arg.js
+function getAnnotationArg(annotations, name) {
+  const anno = getAnnotation(annotations, name);
+  return anno === null || anno === void 0 ? void 0 : anno.argument;
+}
+__name(getAnnotationArg, "getAnnotationArg");
+
+// node_modules/@varavel/vdl-plugin-sdk/dist/utils/deprecations/get-deprecation-message.js
+function getDeprecationMessage(annotations) {
+  const argument = getAnnotationArg(annotations, "deprecated");
+  if ((argument === null || argument === void 0 ? void 0 : argument.kind) !== "string") return;
+  return argument.stringValue;
+}
+__name(getDeprecationMessage, "getDeprecationMessage");
+
+// node_modules/@varavel/vdl-plugin-sdk/dist/utils/deprecations/is-deprecated.js
+function isDeprecated(annotations) {
+  return getAnnotation(annotations, "deprecated") !== void 0;
+}
+__name(isDeprecated, "isDeprecated");
 
 // node_modules/@varavel/vdl-plugin-sdk/dist/utils/ir/unwrap-literal.js
 function unwrapLiteral(value) {
@@ -3331,11 +3390,11 @@ __name(unwrapLiteralValue, "unwrapLiteralValue");
 function extractRpcGroups(ir) {
   const groups = [];
   for (const typeDef of ir.types) {
-    if (!hasAnnotation2(typeDef, "rpc")) {
+    if (!getAnnotation(typeDef.annotations, "httpRpc")) {
       continue;
     }
     const group = extractRpcGroup(typeDef);
-    if (group.procedures.length > 0 || group.streams.length > 0) {
+    if (group.procedures.length > 0) {
       groups.push(group);
     }
   }
@@ -3345,32 +3404,23 @@ __name(extractRpcGroups, "extractRpcGroups");
 function extractRpcGroup(typeDef) {
   var _a14;
   const procedures = [];
-  const streams = [];
-  const rpcFields = (_a14 = typeDef.typeRef.objectFields) != null ? _a14 : [];
-  for (const field of rpcFields) {
+  for (const field of (_a14 = typeDef.typeRef.objectFields) != null ? _a14 : []) {
     const operation = extractOperation(typeDef, field);
-    if (!operation) {
-      continue;
-    }
-    if (operation.kind === "procedure") {
+    if (operation) {
       procedures.push(operation);
-      continue;
     }
-    streams.push(operation);
   }
   return {
     name: typeDef.name,
     doc: typeDef.doc,
-    procedures,
-    streams
+    deprecated: deprecationNote(typeDef.annotations),
+    procedures
   };
 }
 __name(extractRpcGroup, "extractRpcGroup");
 function extractOperation(rpcType, field) {
   var _a14, _b, _c;
-  const isProcedure = hasAnnotation2(field, "proc");
-  const isStream = hasAnnotation2(field, "stream");
-  if (!isProcedure && !isStream) {
+  if (!getAnnotation(field.annotations, "proc")) {
     return void 0;
   }
   const operationFields = (_a14 = field.typeRef.objectFields) != null ? _a14 : [];
@@ -3379,41 +3429,26 @@ function extractOperation(rpcType, field) {
   return {
     rpcName: rpcType.name,
     rpcDoc: rpcType.doc,
-    kind: isProcedure ? "procedure" : "stream",
     name: field.name,
     doc: field.doc,
-    deprecated: hasAnnotation2(field, "deprecated"),
+    deprecated: deprecationNote(field.annotations),
     inputFields: (_b = inputField == null ? void 0 : inputField.typeRef.objectFields) != null ? _b : [],
     outputFields: (_c = outputField == null ? void 0 : outputField.typeRef.objectFields) != null ? _c : []
   };
 }
 __name(extractOperation, "extractOperation");
-function hasAnnotation2(typeDefOrField, name) {
-  return getAnnotation(typeDefOrField.annotations, name) !== void 0;
-}
-__name(hasAnnotation2, "hasAnnotation");
-
-// src/spec-builder/deprecation.ts
-function hasDeprecatedAnnotation(annotations) {
-  return getAnnotation(annotations, "deprecated") !== void 0;
-}
-__name(hasDeprecatedAnnotation, "hasDeprecatedAnnotation");
-function getDeprecatedMessage(annotations) {
-  const deprecatedAnnotation = getAnnotation(annotations, "deprecated");
-  if (!deprecatedAnnotation) {
+function deprecationNote(annotations) {
+  var _a14;
+  if (!isDeprecated(annotations)) {
     return void 0;
   }
-  if (!deprecatedAnnotation.argument) {
-    return "";
-  }
-  const value = unwrapLiteral(deprecatedAnnotation.argument);
-  return typeof value === "string" ? value : String(value);
+  return (_a14 = getDeprecationMessage(annotations)) != null ? _a14 : "";
 }
-__name(getDeprecatedMessage, "getDeprecatedMessage");
+__name(deprecationNote, "deprecationNote");
 
 // src/spec-builder/schema-fragments.ts
 function generateTypeSchema(typeDef) {
-  var _a14, _b;
+  var _a14;
   let schema4;
   if (typeDef.typeRef.kind === "object") {
     const { properties, required } = generatePropertiesFromFields(
@@ -3432,16 +3467,7 @@ function generateTypeSchema(typeDef) {
   if (typeDef.doc) {
     schema4.description = typeDef.doc;
   }
-  const deprecatedMessage = getDeprecatedMessage(typeDef.annotations);
-  if (deprecatedMessage !== void 0) {
-    schema4.deprecated = true;
-    if (deprecatedMessage !== "") {
-      const currentDescription = String((_b = schema4.description) != null ? _b : "");
-      schema4.description = currentDescription === "" ? `Deprecated: ${deprecatedMessage}` : `${currentDescription}
-
-Deprecated: ${deprecatedMessage}`;
-    }
-  }
+  applyDeprecation(schema4, typeDef.annotations, typeDef.doc);
   return schema4;
 }
 __name(generateTypeSchema, "generateTypeSchema");
@@ -3461,9 +3487,7 @@ function generateEnumSchema(enumDef) {
   if (enumDef.doc) {
     schema4.description = enumDef.doc;
   }
-  if (hasDeprecatedAnnotation(enumDef.annotations)) {
-    schema4.deprecated = true;
-  }
+  applyDeprecation(schema4, enumDef.annotations, enumDef.doc);
   return schema4;
 }
 __name(generateEnumSchema, "generateEnumSchema");
@@ -3531,6 +3555,7 @@ function generatePropertiesFromFields(fields) {
         propertySchema.description = field.doc;
       }
     }
+    applyDeprecation(propertySchema, field.annotations, field.doc);
     properties[field.name] = propertySchema;
     if (!field.optional) {
       required.push(field.name);
@@ -3569,17 +3594,22 @@ function generateProcedureResponse(fields, description) {
   };
 }
 __name(generateProcedureResponse, "generateProcedureResponse");
-function generateStreamResponse(fields, description) {
-  return {
-    description,
-    content: {
-      "text/event-stream": {
-        schema: buildOutputEnvelopeSchema(fields)
-      }
-    }
-  };
+function applyDeprecation(schema4, annotations, doc) {
+  var _a14, _b;
+  if (!isDeprecated(annotations)) {
+    return;
+  }
+  schema4.deprecated = true;
+  const message = getDeprecationMessage(annotations);
+  if (message === void 0 || message === "") {
+    return;
+  }
+  const currentDescription = String((_b = (_a14 = schema4.description) != null ? _a14 : doc) != null ? _b : "");
+  schema4.description = currentDescription === "" ? `Deprecated: ${message}` : `${currentDescription}
+
+Deprecated: ${message}`;
 }
-__name(generateStreamResponse, "generateStreamResponse");
+__name(applyDeprecation, "applyDeprecation");
 function buildOutputEnvelopeSchema(fields) {
   const { properties, required } = generateOutputProperties(fields);
   const schema4 = {
@@ -3674,7 +3704,7 @@ function buildSchemas(ir) {
   const typeEntries = [];
   const enumEntries = [];
   for (const typeDef of ir.types) {
-    if (getAnnotation(typeDef.annotations, "rpc")) {
+    if (getAnnotation(typeDef.annotations, "httpRpc")) {
       continue;
     }
     typeEntries.push([typeDef.name, generateTypeSchema(typeDef)]);
@@ -3700,16 +3730,6 @@ function buildRequestBodies(rpcGroups) {
         )
       ]);
     }
-    for (const operation of group.streams) {
-      const inputName = `${group.name}${pascalCase(operation.name)}Input`;
-      entries.push([
-        inputName,
-        generateRequestBody(
-          operation.inputFields,
-          `Request body for ${group.name}/${operation.name} stream subscription`
-        )
-      ]);
-    }
   }
   entries.sort((left, right) => left[0].localeCompare(right[0]));
   return entriesToRecord(entries);
@@ -3725,16 +3745,6 @@ function buildResponses(rpcGroups) {
         generateProcedureResponse(
           operation.outputFields,
           `Response for ${group.name}/${operation.name} procedure`
-        )
-      ]);
-    }
-    for (const operation of group.streams) {
-      const outputName = `${group.name}${pascalCase(operation.name)}Output`;
-      entries.push([
-        outputName,
-        generateStreamResponse(
-          operation.outputFields,
-          `Server-Sent Events for ${group.name}/${operation.name} stream`
         )
       ]);
     }
@@ -3784,15 +3794,7 @@ function buildPaths(rpcGroups) {
   for (const group of rpcGroups) {
     for (const operation of group.procedures) {
       entries.push([
-        `/${group.name}/${operation.name}`,
-        {
-          post: buildPathOperation(operation)
-        }
-      ]);
-    }
-    for (const operation of group.streams) {
-      entries.push([
-        `/${group.name}/${operation.name}`,
+        `/${toLowerFirst(group.name)}/${operation.name}`,
         {
           post: buildPathOperation(operation)
         }
@@ -3803,13 +3805,18 @@ function buildPaths(rpcGroups) {
   return entriesToRecord2(entries);
 }
 __name(buildPaths, "buildPaths");
+function toLowerFirst(value) {
+  if (value.length === 0) {
+    return value;
+  }
+  return value.charAt(0).toLowerCase() + value.slice(1);
+}
+__name(toLowerFirst, "toLowerFirst");
 function buildPathOperation(operation) {
   const inputName = `${operation.rpcName}${pascalCase(operation.name)}Input`;
   const outputName = `${operation.rpcName}${pascalCase(operation.name)}Output`;
   const openApiOperation = {
-    tags: [
-      operation.kind === "procedure" ? `${operation.rpcName}Procedures` : `${operation.rpcName}Streams`
-    ],
+    tags: [`${operation.rpcName}Procedures`],
     requestBody: {
       $ref: `#/components/requestBodies/${inputName}`
     },
@@ -3819,15 +3826,29 @@ function buildPathOperation(operation) {
       }
     }
   };
-  if (operation.doc) {
-    openApiOperation.description = operation.doc;
+  const description = operationDescription(operation);
+  if (description) {
+    openApiOperation.description = description;
   }
-  if (operation.deprecated) {
+  if (operation.deprecated !== void 0) {
     openApiOperation.deprecated = true;
   }
   return openApiOperation;
 }
 __name(buildPathOperation, "buildPathOperation");
+function operationDescription(operation) {
+  if (operation.deprecated === void 0 || operation.deprecated === "") {
+    return operation.doc;
+  }
+  const note = `Deprecated: ${operation.deprecated}`;
+  if (!operation.doc) {
+    return note;
+  }
+  return `${operation.doc}
+
+${note}`;
+}
+__name(operationDescription, "operationDescription");
 function entriesToRecord2(entries) {
   const record = {};
   for (const [key, value] of entries) {
@@ -3839,21 +3860,15 @@ __name(entriesToRecord2, "entriesToRecord");
 
 // src/spec-builder/tags.ts
 function buildTags(rpcGroups) {
-  var _a14, _b;
   const tags = [];
   for (const group of rpcGroups) {
-    if (group.procedures.length > 0) {
-      tags.push({
-        name: `${group.name}Procedures`,
-        description: (_a14 = group.doc) != null ? _a14 : `Procedures for ${group.name}`
-      });
+    if (group.procedures.length === 0) {
+      continue;
     }
-    if (group.streams.length > 0) {
-      tags.push({
-        name: `${group.name}Streams`,
-        description: (_b = group.doc) != null ? _b : `Streams for ${group.name}`
-      });
-    }
+    tags.push({
+      name: `${group.name}Procedures`,
+      description: tagDescription(group)
+    });
   }
   tags.sort((left, right) => {
     return String(left.name).localeCompare(String(right.name));
@@ -3861,6 +3876,17 @@ function buildTags(rpcGroups) {
   return tags;
 }
 __name(buildTags, "buildTags");
+function tagDescription(group) {
+  var _a14;
+  const base = (_a14 = group.doc) != null ? _a14 : `Procedures for ${group.name}`;
+  if (group.deprecated === void 0 || group.deprecated === "") {
+    return base;
+  }
+  return `${base}
+
+Deprecated: ${group.deprecated}`;
+}
+__name(tagDescription, "tagDescription");
 
 // src/spec-builder/index.ts
 function buildOpenApiSpec(ir, rpcGroups, options) {
@@ -3886,7 +3912,7 @@ __name(buildOpenApiSpec, "buildOpenApiSpec");
 // src/generate.ts
 function generateOpenApi(input) {
   const options = resolvePluginOptions(input.options);
-  assertValidIrForRpc(input.ir);
+  assertValidIrForHttpRpc(input.ir);
   const rpcGroups = extractRpcGroups(input.ir);
   const spec = buildOpenApiSpec(input.ir, rpcGroups, options);
   const files = [];

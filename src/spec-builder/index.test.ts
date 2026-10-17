@@ -20,6 +20,8 @@ import {
   generateTypeRefSchema,
   generateTypeSchema,
 } from "./index";
+import { buildPaths, toLowerFirst } from "./paths";
+import { buildTags } from "./tags";
 
 const baseOptions: PluginOptions = {
   outFile: "openapi.yaml",
@@ -130,6 +132,23 @@ describe("generatePropertiesFromFields", () => {
       ],
     });
   });
+
+  it("marks deprecated fields with the SDK helpers", () => {
+    const { properties } = generatePropertiesFromFields([
+      field("legacy", primitiveType("string"), {
+        annotations: [annotation("deprecated", stringLiteral("Use next."))],
+      }),
+      field("bare", primitiveType("string"), {
+        annotations: [annotation("deprecated")],
+      }),
+    ]);
+
+    expect(properties.legacy).toMatchObject({
+      deprecated: true,
+      description: "Deprecated: Use next.",
+    });
+    expect(properties.bare).toMatchObject({ deprecated: true });
+  });
 });
 
 describe("generateTypeSchema and generateEnumSchema", () => {
@@ -181,6 +200,103 @@ describe("generateTypeSchema and generateEnumSchema", () => {
       enum: [1, 10],
     });
   });
+
+  it("marks deprecated enums without requiring a message", () => {
+    const roleSchema = generateEnumSchema(
+      enumDef("Role", "string", [enumMember("Admin", stringLiteral("Admin"))], {
+        annotations: [annotation("deprecated")],
+      }),
+    );
+
+    expect(roleSchema.deprecated).toBe(true);
+  });
+});
+
+describe("toLowerFirst", () => {
+  it("lowercases the first letter and keeps the rest untouched", () => {
+    expect(toLowerFirst("Calculator")).toBe("calculator");
+    expect(toLowerFirst("MyService")).toBe("myService");
+    expect(toLowerFirst("myProc")).toBe("myProc");
+  });
+
+  it("handles empty and single character values", () => {
+    expect(toLowerFirst("")).toBe("");
+    expect(toLowerFirst("A")).toBe("a");
+  });
+
+  it("leaves leading non-letters untouched", () => {
+    expect(toLowerFirst("123Abc")).toBe("123Abc");
+  });
+});
+
+describe("buildPaths", () => {
+  it("derives VPP-2 routes with lowerFirst at build time", () => {
+    const paths = buildPaths([
+      {
+        name: "Users",
+        procedures: [
+          {
+            rpcName: "Users",
+            name: "getUser",
+            inputFields: [],
+            outputFields: [],
+          },
+        ],
+      },
+    ]);
+
+    expect(Object.keys(paths)).toEqual(["/users/getUser"]);
+  });
+
+  it("marks deprecated operations and appends the message", () => {
+    const paths = buildPaths([
+      {
+        name: "Users",
+        procedures: [
+          {
+            rpcName: "Users",
+            name: "getUser",
+            deprecated: "Use getUserV2.",
+            inputFields: [],
+            outputFields: [],
+          },
+        ],
+      },
+    ]);
+
+    const operation = (paths["/users/getUser"] as Record<string, unknown>)
+      .post as Record<string, unknown>;
+
+    expect(operation.deprecated).toBe(true);
+    expect(operation.description).toBe("Deprecated: Use getUserV2.");
+  });
+});
+
+describe("buildTags", () => {
+  it("creates one tag per service and appends service deprecation", () => {
+    const tags = buildTags([
+      {
+        name: "Users",
+        doc: "User APIs",
+        deprecated: "Use UsersV2.",
+        procedures: [
+          {
+            rpcName: "Users",
+            name: "get",
+            inputFields: [],
+            outputFields: [],
+          },
+        ],
+      },
+    ]);
+
+    expect(tags).toEqual([
+      {
+        name: "UsersProcedures",
+        description: "User APIs\n\nDeprecated: Use UsersV2.",
+      },
+    ]);
+  });
 });
 
 describe("buildOpenApiSpec", () => {
@@ -193,24 +309,18 @@ describe("buildOpenApiSpec", () => {
           {
             rpcName: "Users",
             rpcDoc: "User APIs",
-            kind: "procedure",
             name: "get",
-            deprecated: false,
             inputFields: [],
             outputFields: [],
           },
         ],
-        streams: [],
       },
       {
         name: "Chat",
-        procedures: [],
-        streams: [
+        procedures: [
           {
             rpcName: "Chat",
-            kind: "stream",
             name: "messages",
-            deprecated: false,
             inputFields: [],
             outputFields: [],
           },
@@ -228,14 +338,14 @@ describe("buildOpenApiSpec", () => {
       { url: "https://backup.example.com" },
     ]);
     expect(spec.paths).toMatchObject({
-      "/Chat/messages": {
+      "/chat/messages": {
         post: {
           requestBody: {
             $ref: "#/components/requestBodies/ChatMessagesInput",
           },
         },
       },
-      "/Users/get": {
+      "/users/get": {
         post: {
           requestBody: {
             $ref: "#/components/requestBodies/UsersGetInput",
@@ -245,8 +355,8 @@ describe("buildOpenApiSpec", () => {
     });
     expect(spec.tags).toEqual([
       {
-        name: "ChatStreams",
-        description: "Streams for Chat",
+        name: "ChatProcedures",
+        description: "Procedures for Chat",
       },
       {
         name: "UsersProcedures",
@@ -263,19 +373,16 @@ describe("buildOpenApiSpec", () => {
     expect(spec.components).toBeDefined();
   });
 
-  it("includes stream responses with text/event-stream media type", () => {
+  it("emits procedure responses as JSON envelopes", () => {
     const spec = buildOpenApiSpec(
       schema(),
       [
         {
           name: "Feed",
-          procedures: [],
-          streams: [
+          procedures: [
             {
               rpcName: "Feed",
-              kind: "stream",
               name: "updates",
-              deprecated: false,
               inputFields: [],
               outputFields: [],
             },
@@ -293,20 +400,20 @@ describe("buildOpenApiSpec", () => {
     >;
     const content = updatesResponse.content as Record<string, unknown>;
 
-    expect(content["text/event-stream"]).toBeDefined();
+    expect(content["application/json"]).toBeDefined();
   });
 
-  it("adds type and enum schemas while skipping @rpc types", () => {
+  it("adds type and enum schemas while skipping @httpRpc types", () => {
     const ir = schema({
       types: [
         typeDef(
           "RpcService",
           objectType([
-            field("Ping", objectType([]), {
+            field("ping", objectType([]), {
               annotations: [annotation("proc")],
             }),
           ]),
-          { annotations: [annotation("rpc")] },
+          { annotations: [annotation("httpRpc")] },
         ),
         typeDef("User", objectType([field("id", primitiveType("string"))])),
       ],
