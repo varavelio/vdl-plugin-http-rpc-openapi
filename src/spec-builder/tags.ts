@@ -7,7 +7,7 @@ export function buildTags(rpcGroups: RpcGroup[]): Record<string, unknown>[] {
   const tags: Record<string, unknown>[] = [];
 
   for (const group of rpcGroups) {
-    if (group.procedures.length === 0) {
+    if (group.procs.length === 0) {
       continue;
     }
 

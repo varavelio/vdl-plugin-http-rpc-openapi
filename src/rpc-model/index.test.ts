@@ -47,9 +47,7 @@ describe("extractRpcGroups", () => {
     expect(firstGroup).toBeDefined();
     expect(firstGroup?.name).toBe("ChatService");
     expect(firstGroup?.doc).toBe("Chat APIs");
-    expect(firstGroup?.procedures.map((item) => item.name)).toEqual([
-      "sendMessage",
-    ]);
+    expect(firstGroup?.procs.map((item) => item.name)).toEqual(["sendMessage"]);
   });
 
   it("ignores types without @httpRpc", () => {
@@ -96,8 +94,8 @@ describe("extractRpcGroups", () => {
     const firstGroup = groups[0];
 
     expect(groups).toHaveLength(1);
-    expect(firstGroup?.procedures).toHaveLength(1);
-    expect(firstGroup?.procedures[0]?.name).toBe("ping");
+    expect(firstGroup?.procs).toHaveLength(1);
+    expect(firstGroup?.procs[0]?.name).toBe("ping");
   });
 
   it("treats missing input and output blocks as empty payloads", () => {
@@ -117,8 +115,8 @@ describe("extractRpcGroups", () => {
 
     const group = extractRpcGroups(ir)[0];
     expect(group).toBeDefined();
-    expect(group?.procedures[0]?.inputFields).toEqual([]);
-    expect(group?.procedures[0]?.outputFields).toEqual([]);
+    expect(group?.procs[0]?.inputFields).toEqual([]);
+    expect(group?.procs[0]?.outputFields).toEqual([]);
   });
 
   it("skips services without procedures", () => {
@@ -165,8 +163,8 @@ describe("extractRpcGroups", () => {
 
     const group = extractRpcGroups(ir)[0];
     expect(group?.deprecated).toBe("Use ServiceV2.");
-    expect(group?.procedures[0]?.deprecated).toBe("Use ping instead.");
-    expect(group?.procedures[1]?.deprecated).toBe("");
+    expect(group?.procs[0]?.deprecated).toBe("Use ping instead.");
+    expect(group?.procs[1]?.deprecated).toBe("");
   });
 
   it("leaves deprecation undefined when no annotation is present", () => {
@@ -186,6 +184,6 @@ describe("extractRpcGroups", () => {
 
     const group = extractRpcGroups(ir)[0];
     expect(group?.deprecated).toBeUndefined();
-    expect(group?.procedures[0]?.deprecated).toBeUndefined();
+    expect(group?.procs[0]?.deprecated).toBeUndefined();
   });
 });

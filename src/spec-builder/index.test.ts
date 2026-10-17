@@ -234,7 +234,7 @@ describe("buildPaths", () => {
     const paths = buildPaths([
       {
         name: "Users",
-        procedures: [
+        procs: [
           {
             rpcName: "Users",
             name: "getUser",
@@ -248,11 +248,11 @@ describe("buildPaths", () => {
     expect(Object.keys(paths)).toEqual(["/users/getUser"]);
   });
 
-  it("marks deprecated operations and appends the message", () => {
+  it("marks deprecated procedures and appends the message", () => {
     const paths = buildPaths([
       {
         name: "Users",
-        procedures: [
+        procs: [
           {
             rpcName: "Users",
             name: "getUser",
@@ -264,11 +264,11 @@ describe("buildPaths", () => {
       },
     ]);
 
-    const operation = (paths["/users/getUser"] as Record<string, unknown>)
+    const proc = (paths["/users/getUser"] as Record<string, unknown>)
       .post as Record<string, unknown>;
 
-    expect(operation.deprecated).toBe(true);
-    expect(operation.description).toBe("Deprecated: Use getUserV2.");
+    expect(proc.deprecated).toBe(true);
+    expect(proc.description).toBe("Deprecated: Use getUserV2.");
   });
 });
 
@@ -279,7 +279,7 @@ describe("buildTags", () => {
         name: "Users",
         doc: "User APIs",
         deprecated: "Use UsersV2.",
-        procedures: [
+        procs: [
           {
             rpcName: "Users",
             name: "get",
@@ -305,7 +305,7 @@ describe("buildOpenApiSpec", () => {
     const rpcGroups: RpcGroup[] = [
       {
         name: "Users",
-        procedures: [
+        procs: [
           {
             rpcName: "Users",
             rpcDoc: "User APIs",
@@ -317,7 +317,7 @@ describe("buildOpenApiSpec", () => {
       },
       {
         name: "Chat",
-        procedures: [
+        procs: [
           {
             rpcName: "Chat",
             name: "messages",
@@ -365,7 +365,7 @@ describe("buildOpenApiSpec", () => {
     ]);
   });
 
-  it("omits tags and paths when no RPC operations are present", () => {
+  it("omits tags and paths when no RPC procedures are present", () => {
     const spec = buildOpenApiSpec(schema(), [], baseOptions);
 
     expect(spec.tags).toBeUndefined();
@@ -379,7 +379,7 @@ describe("buildOpenApiSpec", () => {
       [
         {
           name: "Feed",
-          procedures: [
+          procs: [
             {
               rpcName: "Feed",
               name: "updates",

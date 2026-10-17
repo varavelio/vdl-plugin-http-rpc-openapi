@@ -121,10 +121,10 @@ Notes:
 
 ## HTTP RPC Annotation Model
 
-This plugin reads HTTP RPC operations from the standard VDL HTTP RPC annotations:
+This plugin reads HTTP RPC procedures from the standard VDL HTTP RPC annotations:
 
 - `@httpRpc` marks a top-level service type
-- `@proc` marks a request/response operation
+- `@proc` marks a request/response procedure
 
 Example:
 
@@ -156,7 +156,7 @@ type ChatService {
 
 ## Response Envelope Behavior
 
-Operation responses are wrapped in a consistent envelope:
+Procedure responses are wrapped in a consistent envelope:
 
 - `ok` (`boolean`) always present
 - `output` object with your declared output fields

@@ -4,7 +4,7 @@ import { pascalCase } from "@varavel/vdl-plugin-sdk/utils/strings";
 import type { RpcGroup } from "../rpc-model";
 import {
   generateEnumSchema,
-  generateProcedureResponse,
+  generateProcResponse,
   generateRequestBody,
   generateTypeSchema,
 } from "./schema-fragments";
@@ -75,14 +75,14 @@ function buildRequestBodies(rpcGroups: RpcGroup[]): Record<string, unknown> {
   const entries: Array<[string, unknown]> = [];
 
   for (const group of rpcGroups) {
-    for (const operation of group.procedures) {
-      const inputName = `${group.name}${pascalCase(operation.name)}Input`;
+    for (const proc of group.procs) {
+      const inputName = `${group.name}${pascalCase(proc.name)}Input`;
 
       entries.push([
         inputName,
         generateRequestBody(
-          operation.inputFields,
-          `Request body for ${group.name}/${operation.name} procedure`,
+          proc.inputFields,
+          `Request body for ${group.name}/${proc.name} procedure`,
         ),
       ]);
     }
@@ -97,14 +97,14 @@ function buildResponses(rpcGroups: RpcGroup[]): Record<string, unknown> {
   const entries: Array<[string, unknown]> = [];
 
   for (const group of rpcGroups) {
-    for (const operation of group.procedures) {
-      const outputName = `${group.name}${pascalCase(operation.name)}Output`;
+    for (const proc of group.procs) {
+      const outputName = `${group.name}${pascalCase(proc.name)}Output`;
 
       entries.push([
         outputName,
-        generateProcedureResponse(
-          operation.outputFields,
-          `Response for ${group.name}/${operation.name} procedure`,
+        generateProcResponse(
+          proc.outputFields,
+          `Response for ${group.name}/${proc.name} procedure`,
         ),
       ]);
     }

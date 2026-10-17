@@ -1,5 +1,5 @@
 import { pascalCase } from "@varavel/vdl-plugin-sdk/utils/strings";
-import type { RpcGroup, RpcOperation } from "../rpc-model";
+import type { RpcGroup, RpcProc } from "../rpc-model";
 
 /**
  * Builds the OpenAPI paths object with VPP-2 routes.
@@ -11,11 +11,11 @@ export function buildPaths(rpcGroups: RpcGroup[]): Record<string, unknown> {
   const entries: Array<[string, Record<string, unknown>]> = [];
 
   for (const group of rpcGroups) {
-    for (const operation of group.procedures) {
+    for (const proc of group.procs) {
       entries.push([
-        `/${toLowerFirst(group.name)}/${operation.name}`,
+        `/${toLowerFirst(group.name)}/${proc.name}`,
         {
-          post: buildPathOperation(operation),
+          post: buildPathProc(proc),
         },
       ]);
     }
@@ -37,11 +37,11 @@ export function toLowerFirst(value: string): string {
   return value.charAt(0).toLowerCase() + value.slice(1);
 }
 
-function buildPathOperation(operation: RpcOperation): Record<string, unknown> {
-  const inputName = `${operation.rpcName}${pascalCase(operation.name)}Input`;
-  const outputName = `${operation.rpcName}${pascalCase(operation.name)}Output`;
-  const openApiOperation: Record<string, unknown> = {
-    tags: [`${operation.rpcName}Procedures`],
+function buildPathProc(proc: RpcProc): Record<string, unknown> {
+  const inputName = `${proc.rpcName}${pascalCase(proc.name)}Input`;
+  const outputName = `${proc.rpcName}${pascalCase(proc.name)}Output`;
+  const pathProc: Record<string, unknown> = {
+    tags: [`${proc.rpcName}Procedures`],
     requestBody: {
       $ref: `#/components/requestBodies/${inputName}`,
     },
@@ -52,31 +52,31 @@ function buildPathOperation(operation: RpcOperation): Record<string, unknown> {
     },
   };
 
-  const description = operationDescription(operation);
+  const description = procDescription(proc);
 
   if (description) {
-    openApiOperation.description = description;
+    pathProc.description = description;
   }
 
-  if (operation.deprecated !== undefined) {
-    openApiOperation.deprecated = true;
+  if (proc.deprecated !== undefined) {
+    pathProc.deprecated = true;
   }
 
-  return openApiOperation;
+  return pathProc;
 }
 
-function operationDescription(operation: RpcOperation): string | undefined {
-  if (operation.deprecated === undefined || operation.deprecated === "") {
-    return operation.doc;
+function procDescription(proc: RpcProc): string | undefined {
+  if (proc.deprecated === undefined || proc.deprecated === "") {
+    return proc.doc;
   }
 
-  const note = `Deprecated: ${operation.deprecated}`;
+  const note = `Deprecated: ${proc.deprecated}`;
 
-  if (!operation.doc) {
+  if (!proc.doc) {
     return note;
   }
 
-  return `${operation.doc}\n\n${note}`;
+  return `${proc.doc}\n\n${note}`;
 }
 
 function entriesToRecord(

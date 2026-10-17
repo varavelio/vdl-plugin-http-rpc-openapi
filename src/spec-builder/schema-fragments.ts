@@ -181,7 +181,7 @@ export function generateRequestBody(
   };
 }
 
-export function generateProcedureResponse(
+export function generateProcResponse(
   fields: Field[],
   description: string,
 ): Record<string, unknown> {

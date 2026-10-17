@@ -3394,7 +3394,7 @@ function extractRpcGroups(ir) {
       continue;
     }
     const group = extractRpcGroup(typeDef);
-    if (group.procedures.length > 0) {
+    if (group.procs.length > 0) {
       groups.push(group);
     }
   }
@@ -3403,29 +3403,29 @@ function extractRpcGroups(ir) {
 __name(extractRpcGroups, "extractRpcGroups");
 function extractRpcGroup(typeDef) {
   var _a14;
-  const procedures = [];
+  const procs = [];
   for (const field of (_a14 = typeDef.typeRef.objectFields) != null ? _a14 : []) {
-    const operation = extractOperation(typeDef, field);
-    if (operation) {
-      procedures.push(operation);
+    const proc = extractProc(typeDef, field);
+    if (proc) {
+      procs.push(proc);
     }
   }
   return {
     name: typeDef.name,
     doc: typeDef.doc,
     deprecated: deprecationNote(typeDef.annotations),
-    procedures
+    procs
   };
 }
 __name(extractRpcGroup, "extractRpcGroup");
-function extractOperation(rpcType, field) {
+function extractProc(rpcType, field) {
   var _a14, _b, _c;
   if (!getAnnotation(field.annotations, "proc")) {
     return void 0;
   }
-  const operationFields = (_a14 = field.typeRef.objectFields) != null ? _a14 : [];
-  const inputField = operationFields.find((item) => item.name === "input");
-  const outputField = operationFields.find((item) => item.name === "output");
+  const procFields = (_a14 = field.typeRef.objectFields) != null ? _a14 : [];
+  const inputField = procFields.find((item) => item.name === "input");
+  const outputField = procFields.find((item) => item.name === "output");
   return {
     rpcName: rpcType.name,
     rpcDoc: rpcType.doc,
@@ -3436,7 +3436,7 @@ function extractOperation(rpcType, field) {
     outputFields: (_c = outputField == null ? void 0 : outputField.typeRef.objectFields) != null ? _c : []
   };
 }
-__name(extractOperation, "extractOperation");
+__name(extractProc, "extractProc");
 function deprecationNote(annotations) {
   var _a14;
   if (!isDeprecated(annotations)) {
@@ -3583,7 +3583,7 @@ function generateRequestBody(fields, description) {
   };
 }
 __name(generateRequestBody, "generateRequestBody");
-function generateProcedureResponse(fields, description) {
+function generateProcResponse(fields, description) {
   return {
     description,
     content: {
@@ -3593,7 +3593,7 @@ function generateProcedureResponse(fields, description) {
     }
   };
 }
-__name(generateProcedureResponse, "generateProcedureResponse");
+__name(generateProcResponse, "generateProcResponse");
 function applyDeprecation(schema4, annotations, doc) {
   var _a14, _b;
   if (!isDeprecated(annotations)) {
@@ -3720,13 +3720,13 @@ __name(buildSchemas, "buildSchemas");
 function buildRequestBodies(rpcGroups) {
   const entries = [];
   for (const group of rpcGroups) {
-    for (const operation of group.procedures) {
-      const inputName = `${group.name}${pascalCase(operation.name)}Input`;
+    for (const proc of group.procs) {
+      const inputName = `${group.name}${pascalCase(proc.name)}Input`;
       entries.push([
         inputName,
         generateRequestBody(
-          operation.inputFields,
-          `Request body for ${group.name}/${operation.name} procedure`
+          proc.inputFields,
+          `Request body for ${group.name}/${proc.name} procedure`
         )
       ]);
     }
@@ -3738,13 +3738,13 @@ __name(buildRequestBodies, "buildRequestBodies");
 function buildResponses(rpcGroups) {
   const entries = [];
   for (const group of rpcGroups) {
-    for (const operation of group.procedures) {
-      const outputName = `${group.name}${pascalCase(operation.name)}Output`;
+    for (const proc of group.procs) {
+      const outputName = `${group.name}${pascalCase(proc.name)}Output`;
       entries.push([
         outputName,
-        generateProcedureResponse(
-          operation.outputFields,
-          `Response for ${group.name}/${operation.name} procedure`
+        generateProcResponse(
+          proc.outputFields,
+          `Response for ${group.name}/${proc.name} procedure`
         )
       ]);
     }
@@ -3792,11 +3792,11 @@ __name(buildInfo, "buildInfo");
 function buildPaths(rpcGroups) {
   const entries = [];
   for (const group of rpcGroups) {
-    for (const operation of group.procedures) {
+    for (const proc of group.procs) {
       entries.push([
-        `/${toLowerFirst(group.name)}/${operation.name}`,
+        `/${toLowerFirst(group.name)}/${proc.name}`,
         {
-          post: buildPathOperation(operation)
+          post: buildPathProc(proc)
         }
       ]);
     }
@@ -3812,11 +3812,11 @@ function toLowerFirst(value) {
   return value.charAt(0).toLowerCase() + value.slice(1);
 }
 __name(toLowerFirst, "toLowerFirst");
-function buildPathOperation(operation) {
-  const inputName = `${operation.rpcName}${pascalCase(operation.name)}Input`;
-  const outputName = `${operation.rpcName}${pascalCase(operation.name)}Output`;
-  const openApiOperation = {
-    tags: [`${operation.rpcName}Procedures`],
+function buildPathProc(proc) {
+  const inputName = `${proc.rpcName}${pascalCase(proc.name)}Input`;
+  const outputName = `${proc.rpcName}${pascalCase(proc.name)}Output`;
+  const pathProc = {
+    tags: [`${proc.rpcName}Procedures`],
     requestBody: {
       $ref: `#/components/requestBodies/${inputName}`
     },
@@ -3826,29 +3826,29 @@ function buildPathOperation(operation) {
       }
     }
   };
-  const description = operationDescription(operation);
+  const description = procDescription(proc);
   if (description) {
-    openApiOperation.description = description;
+    pathProc.description = description;
   }
-  if (operation.deprecated !== void 0) {
-    openApiOperation.deprecated = true;
+  if (proc.deprecated !== void 0) {
+    pathProc.deprecated = true;
   }
-  return openApiOperation;
+  return pathProc;
 }
-__name(buildPathOperation, "buildPathOperation");
-function operationDescription(operation) {
-  if (operation.deprecated === void 0 || operation.deprecated === "") {
-    return operation.doc;
+__name(buildPathProc, "buildPathProc");
+function procDescription(proc) {
+  if (proc.deprecated === void 0 || proc.deprecated === "") {
+    return proc.doc;
   }
-  const note = `Deprecated: ${operation.deprecated}`;
-  if (!operation.doc) {
+  const note = `Deprecated: ${proc.deprecated}`;
+  if (!proc.doc) {
     return note;
   }
-  return `${operation.doc}
+  return `${proc.doc}
 
 ${note}`;
 }
-__name(operationDescription, "operationDescription");
+__name(procDescription, "procDescription");
 function entriesToRecord2(entries) {
   const record = {};
   for (const [key, value] of entries) {
@@ -3862,7 +3862,7 @@ __name(entriesToRecord2, "entriesToRecord");
 function buildTags(rpcGroups) {
   const tags = [];
   for (const group of rpcGroups) {
-    if (group.procedures.length === 0) {
+    if (group.procs.length === 0) {
       continue;
     }
     tags.push({

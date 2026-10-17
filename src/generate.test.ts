@@ -218,7 +218,7 @@ describe("generateOpenApi", () => {
     expect(file.content).toContain('"openapi": "3.0.0"');
   });
 
-  it("generates paths and components from RPC operations", () => {
+  it("generates paths and components from RPC procedures", () => {
     const output = generateOpenApi(
       pluginInput({
         ir: schema({

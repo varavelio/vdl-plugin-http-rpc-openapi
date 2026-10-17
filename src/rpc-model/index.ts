@@ -6,7 +6,7 @@ import {
 import { getAnnotation } from "@varavel/vdl-plugin-sdk/utils/ir";
 
 /** Single VPP-2 procedure discovered inside an `@httpRpc` service. */
-export type RpcOperation = {
+export type RpcProc = {
   rpcName: string;
   rpcDoc?: string;
   name: string;
@@ -21,7 +21,7 @@ export type RpcGroup = {
   name: string;
   doc?: string;
   deprecated?: string;
-  procedures: RpcOperation[];
+  procs: RpcProc[];
 };
 
 /**
@@ -38,7 +38,7 @@ export function extractRpcGroups(ir: IrSchema): RpcGroup[] {
 
     const group = extractRpcGroup(typeDef);
 
-    if (group.procedures.length > 0) {
+    if (group.procs.length > 0) {
       groups.push(group);
     }
   }
@@ -47,13 +47,13 @@ export function extractRpcGroups(ir: IrSchema): RpcGroup[] {
 }
 
 function extractRpcGroup(typeDef: TypeDef): RpcGroup {
-  const procedures: RpcOperation[] = [];
+  const procs: RpcProc[] = [];
 
   for (const field of typeDef.typeRef.objectFields ?? []) {
-    const operation = extractOperation(typeDef, field);
+    const proc = extractProc(typeDef, field);
 
-    if (operation) {
-      procedures.push(operation);
+    if (proc) {
+      procs.push(proc);
     }
   }
 
@@ -61,21 +61,18 @@ function extractRpcGroup(typeDef: TypeDef): RpcGroup {
     name: typeDef.name,
     doc: typeDef.doc,
     deprecated: deprecationNote(typeDef.annotations),
-    procedures,
+    procs,
   };
 }
 
-function extractOperation(
-  rpcType: TypeDef,
-  field: Field,
-): RpcOperation | undefined {
+function extractProc(rpcType: TypeDef, field: Field): RpcProc | undefined {
   if (!getAnnotation(field.annotations, "proc")) {
     return undefined;
   }
 
-  const operationFields = field.typeRef.objectFields ?? [];
-  const inputField = operationFields.find((item) => item.name === "input");
-  const outputField = operationFields.find((item) => item.name === "output");
+  const procFields = field.typeRef.objectFields ?? [];
+  const inputField = procFields.find((item) => item.name === "input");
+  const outputField = procFields.find((item) => item.name === "output");
 
   return {
     rpcName: rpcType.name,
