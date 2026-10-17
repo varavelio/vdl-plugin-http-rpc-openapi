@@ -84,7 +84,7 @@ describe("generateOpenApi", () => {
 
     expect(playgroundFile.content).toContain("<title>Scalar API</title>");
     expect(playgroundFile.content).toContain(
-      "https://cdn.jsdelivr.net/npm/@scalar/api-reference@1.55.1/dist/browser/standalone.js",
+      "https://cdn.jsdelivr.net/npm/@scalar/api-reference@1.75.0/dist/browser/standalone.js",
     );
     expect(playgroundFile.content).toContain(
       "Scalar.createApiReference('#app', {",
@@ -110,10 +110,10 @@ describe("generateOpenApi", () => {
 
     expect(playgroundFile.content).toContain("<title>Elements API</title>");
     expect(playgroundFile.content).toContain(
-      "https://cdn.jsdelivr.net/npm/@stoplight/elements@9.0.19/web-components.min.js",
+      "https://cdn.jsdelivr.net/npm/@stoplight/elements@9.0.28/web-components.min.js",
     );
     expect(playgroundFile.content).toContain(
-      "https://cdn.jsdelivr.net/npm/@stoplight/elements@9.0.19/styles.min.css",
+      "https://cdn.jsdelivr.net/npm/@stoplight/elements@9.0.28/styles.min.css",
     );
     expect(playgroundFile.content).toContain("crossorigin");
     expect(playgroundFile.content).toContain('<elements-api id="docs"');
