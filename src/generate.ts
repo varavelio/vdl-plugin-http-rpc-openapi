@@ -1,5 +1,5 @@
 import type { PluginInput, PluginOutput } from "@varavel/vdl-plugin-sdk";
-import { assertValidIrForRpc } from "@varavel/vdl-plugin-sdk/utils/rpc";
+import { assertValidIrForHttpRpc } from "@varavel/vdl-plugin-sdk/utils/rpc";
 import {
   escapeHtml,
   escapeScriptTag,
@@ -13,11 +13,11 @@ import { extractRpcGroups } from "./rpc-model";
 import { buildOpenApiSpec } from "./spec-builder";
 
 /**
- * Generates a single OpenAPI file (YAML or JSON) from a VDL schema.
+ * Generates a single OpenAPI file (YAML or JSON) from a VDL HTTP RPC schema.
  */
 export function generateOpenApi(input: PluginInput): PluginOutput {
   const options = resolvePluginOptions(input.options);
-  assertValidIrForRpc(input.ir);
+  assertValidIrForHttpRpc(input.ir);
 
   const rpcGroups = extractRpcGroups(input.ir);
   const spec = buildOpenApiSpec(input.ir, rpcGroups, options);

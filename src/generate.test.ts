@@ -241,7 +241,7 @@ describe("generateOpenApi", () => {
                   { annotations: [annotation("proc")] },
                 ),
               ]),
-              { annotations: [annotation("rpc")] },
+              { annotations: [annotation("httpRpc")] },
             ),
           ],
         }),
@@ -253,7 +253,7 @@ describe("generateOpenApi", () => {
     );
     const paths = parsed.paths as Record<string, unknown>;
 
-    expect(paths["/Service/Ping"]).toBeDefined();
+    expect(paths["/service/Ping"]).toBeDefined();
 
     const components = parsed.components as Record<string, unknown>;
     const requestBodies = components.requestBodies as Record<string, unknown>;
