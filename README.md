@@ -156,7 +156,7 @@ type ChatService {
 ## What You Get
 
 - OpenAPI document version `3.0.0`.
-- A global `AuthToken` security scheme using the `Authorization` header.
+- A global `Auth` security scheme. Defaults to a generic API key, configurable to `none`, `apiKey`, `bearer`, or `basic`.
 - One tag group per HTTP RPC service (`<Service>Procedures`).
 - One `POST` path per procedure with route pattern `/<lowerFirst(RPCName)>/<ProcedureName>` (for example `/users/getUser`).
 - Reusable request bodies and responses under `components.requestBodies` and `components.responses`.

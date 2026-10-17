@@ -456,11 +456,11 @@ describe("buildOpenApiSpec auth", () => {
       auth: "bearer",
     });
 
-    expect(spec.security).toEqual([{ AuthToken: [] }]);
+    expect(spec.security).toEqual([{ Auth: [] }]);
 
     const components = spec.components as Record<string, unknown>;
     expect(components.securitySchemes).toEqual({
-      AuthToken: {
+      Auth: {
         type: "http",
         scheme: "bearer",
         bearerFormat: "JWT",
@@ -477,7 +477,7 @@ describe("buildOpenApiSpec auth", () => {
 
     const components = spec.components as Record<string, unknown>;
     expect(components.securitySchemes).toEqual({
-      AuthToken: {
+      Auth: {
         type: "http",
         scheme: "basic",
         description: expect.any(String),
@@ -495,7 +495,7 @@ describe("buildOpenApiSpec auth", () => {
 
     const components = spec.components as Record<string, unknown>;
     expect(components.securitySchemes).toMatchObject({
-      AuthToken: {
+      Auth: {
         type: "apiKey",
         in: "query",
         name: "X-API-Key",

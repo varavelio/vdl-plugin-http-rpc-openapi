@@ -29,7 +29,7 @@ export function buildOpenApiSpec(
   };
 
   if (options.auth !== "none") {
-    spec.security = [{ AuthToken: [] }];
+    spec.security = [{ Auth: [] }];
   }
 
   if (options.baseUrls && options.baseUrls.length > 0) {

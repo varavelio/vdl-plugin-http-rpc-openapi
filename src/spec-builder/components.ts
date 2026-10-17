@@ -10,14 +10,11 @@ import {
   generateTypeSchema,
 } from "./schema-fragments";
 
-const AUTH_TOKEN_DESCRIPTION =
-  "Enter the full value for the Authorization header. The specific format (Bearer, Basic, API Key, etc.) is determined by the server's implementation.\n\n---\n**Examples:**\n- **Bearer Token:** `Bearer eyJhbGciOiJIUzI1Ni...` (a JWT token)\n- **Basic Auth:** `Basic dXNlcm5hbWU6cGFzc3dvcmQ=` (a base64 encoding of `username:password`)\n- **API Key:** `sk_live_123abc456def` (a raw token)";
+const API_KEY_DESCRIPTION = "Enter the API key value.";
 
-const BEARER_DESCRIPTION =
-  "Enter the bearer token. The playground sends it as `Authorization: Bearer <token>`.";
+const BEARER_DESCRIPTION = "Enter the bearer token.";
 
-const BASIC_DESCRIPTION =
-  "Enter the username and password. The playground sends them as `Authorization: Basic <base64(username:password)>`.";
+const BASIC_DESCRIPTION = "Enter the username and password.";
 
 /**
  * Builds the reusable OpenAPI components section.
@@ -55,7 +52,7 @@ export function buildComponents(
 }
 
 /**
- * Builds the `AuthToken` security scheme for the configured `auth` preset.
+ * Builds the `Auth` security scheme for the configured `auth` preset.
  * Returns undefined when authentication is disabled.
  */
 function buildSecuritySchemes(
@@ -66,7 +63,7 @@ function buildSecuritySchemes(
       return undefined;
     case "bearer":
       return {
-        AuthToken: {
+        Auth: {
           type: "http",
           scheme: "bearer",
           bearerFormat: "JWT",
@@ -75,7 +72,7 @@ function buildSecuritySchemes(
       };
     case "basic":
       return {
-        AuthToken: {
+        Auth: {
           type: "http",
           scheme: "basic",
           description: BASIC_DESCRIPTION,
@@ -83,11 +80,11 @@ function buildSecuritySchemes(
       };
     default:
       return {
-        AuthToken: {
+        Auth: {
           type: "apiKey",
           in: options.authApiKeyIn,
           name: options.authApiKeyName,
-          description: AUTH_TOKEN_DESCRIPTION,
+          description: API_KEY_DESCRIPTION,
         },
       };
   }

@@ -3,30 +3,15 @@ info:
   title: Inline Types API
   version: 1.0.0
 security:
-  - AuthToken: []
+  - Auth: []
 paths: {}
 components:
   securitySchemes:
-    AuthToken:
+    Auth:
       type: apiKey
       in: header
       name: Authorization
-      description: >-
-        Enter the full value for the Authorization header. The specific format
-        (Bearer, Basic, API Key, etc.) is determined by the server's
-        implementation.
-
-
-        ---
-
-        **Examples:**
-
-        - **Bearer Token:** `Bearer eyJhbGciOiJIUzI1Ni...` (a JWT token)
-
-        - **Basic Auth:** `Basic dXNlcm5hbWU6cGFzc3dvcmQ=` (a base64 encoding of
-        `username:password`)
-
-        - **API Key:** `sk_live_123abc456def` (a raw token)
+      description: Enter the API key value.
   schemas:
     ComplexInlineTypes:
       type: object

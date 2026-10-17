@@ -3711,9 +3711,9 @@ function primitiveToJsonSchema(primitiveName) {
 __name(primitiveToJsonSchema, "primitiveToJsonSchema");
 
 // src/spec-builder/components.ts
-var AUTH_TOKEN_DESCRIPTION = "Enter the full value for the Authorization header. The specific format (Bearer, Basic, API Key, etc.) is determined by the server's implementation.\n\n---\n**Examples:**\n- **Bearer Token:** `Bearer eyJhbGciOiJIUzI1Ni...` (a JWT token)\n- **Basic Auth:** `Basic dXNlcm5hbWU6cGFzc3dvcmQ=` (a base64 encoding of `username:password`)\n- **API Key:** `sk_live_123abc456def` (a raw token)";
-var BEARER_DESCRIPTION = "Enter the bearer token. The playground sends it as `Authorization: Bearer <token>`.";
-var BASIC_DESCRIPTION = "Enter the username and password. The playground sends them as `Authorization: Basic <base64(username:password)>`.";
+var API_KEY_DESCRIPTION = "Enter the API key value.";
+var BEARER_DESCRIPTION = "Enter the bearer token.";
+var BASIC_DESCRIPTION = "Enter the username and password.";
 function buildComponents(ir, rpcGroups, options) {
   const schemas2 = buildSchemas(ir);
   const requestBodies = buildRequestBodies(rpcGroups);
@@ -3741,7 +3741,7 @@ function buildSecuritySchemes(options) {
       return void 0;
     case "bearer":
       return {
-        AuthToken: {
+        Auth: {
           type: "http",
           scheme: "bearer",
           bearerFormat: "JWT",
@@ -3750,7 +3750,7 @@ function buildSecuritySchemes(options) {
       };
     case "basic":
       return {
-        AuthToken: {
+        Auth: {
           type: "http",
           scheme: "basic",
           description: BASIC_DESCRIPTION
@@ -3758,11 +3758,11 @@ function buildSecuritySchemes(options) {
       };
     default:
       return {
-        AuthToken: {
+        Auth: {
           type: "apiKey",
           in: options.authApiKeyIn,
           name: options.authApiKeyName,
-          description: AUTH_TOKEN_DESCRIPTION
+          description: API_KEY_DESCRIPTION
         }
       };
   }
@@ -3963,7 +3963,7 @@ function buildOpenApiSpec(ir, rpcGroups, options) {
     info: buildInfo(options)
   };
   if (options.auth !== "none") {
-    spec.security = [{ AuthToken: [] }];
+    spec.security = [{ Auth: [] }];
   }
   if (options.baseUrls && options.baseUrls.length > 0) {
     spec.servers = options.baseUrls.map((url) => ({ url }));

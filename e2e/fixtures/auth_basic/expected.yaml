@@ -3,7 +3,7 @@ info:
   title: Auth Basic API
   version: 1.0.0
 security:
-  - AuthToken: []
+  - Auth: []
 tags:
   - name: EntityServiceProcedures
     description: Procedures for EntityService
@@ -19,11 +19,10 @@ paths:
           $ref: "#/components/responses/EntityServiceGetEntityOutput"
 components:
   securitySchemes:
-    AuthToken:
+    Auth:
       type: http
       scheme: basic
-      description: "Enter the username and password. The playground sends them as
-        `Authorization: Basic <base64(username:password)>`."
+      description: Enter the username and password.
   schemas:
     Entity:
       type: object

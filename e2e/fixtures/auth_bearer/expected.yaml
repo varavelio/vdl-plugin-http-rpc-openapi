@@ -3,7 +3,7 @@ info:
   title: Auth Bearer API
   version: 1.0.0
 security:
-  - AuthToken: []
+  - Auth: []
 tags:
   - name: EntityServiceProcedures
     description: Procedures for EntityService
@@ -19,12 +19,11 @@ paths:
           $ref: "#/components/responses/EntityServiceGetEntityOutput"
 components:
   securitySchemes:
-    AuthToken:
+    Auth:
       type: http
       scheme: bearer
       bearerFormat: JWT
-      description: "Enter the bearer token. The playground sends it as `Authorization:
-        Bearer <token>`."
+      description: Enter the bearer token.
   schemas:
     Entity:
       type: object

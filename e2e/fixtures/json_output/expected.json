@@ -6,7 +6,7 @@
   },
   "security": [
     {
-      "AuthToken": []
+      "Auth": []
     }
   ],
   "tags": [
@@ -34,11 +34,11 @@
   },
   "components": {
     "securitySchemes": {
-      "AuthToken": {
+      "Auth": {
         "type": "apiKey",
         "in": "header",
         "name": "Authorization",
-        "description": "Enter the full value for the Authorization header. The specific format (Bearer, Basic, API Key, etc.) is determined by the server's implementation.\n\n---\n**Examples:**\n- **Bearer Token:** `Bearer eyJhbGciOiJIUzI1Ni...` (a JWT token)\n- **Basic Auth:** `Basic dXNlcm5hbWU6cGFzc3dvcmQ=` (a base64 encoding of `username:password`)\n- **API Key:** `sk_live_123abc456def` (a raw token)"
+        "description": "Enter the API key value."
       }
     },
     "schemas": {
