@@ -10,11 +10,11 @@ import {
   generateTypeSchema,
 } from "./schema-fragments";
 
-const API_KEY_DESCRIPTION = "Enter the API key value.";
+const BEARER_DESCRIPTION =
+  "Enter the bearer token. Sent as `Authorization: Bearer <token>` header.";
 
-const BEARER_DESCRIPTION = "Enter the bearer token.";
-
-const BASIC_DESCRIPTION = "Enter the username and password.";
+const BASIC_DESCRIPTION =
+  "Enter the username and password. Sent as `Authorization: Basic <base64(username:password)>` header.";
 
 /**
  * Builds the reusable OpenAPI components section.
@@ -52,6 +52,21 @@ export function buildComponents(
 }
 
 /**
+ * Builds the didactic `Auth` description for the configured API key location.
+ * Resolved at build time so novices see exactly where the value travels.
+ */
+function apiKeyDescription(options: PluginOptions): string {
+  switch (options.authApiKeyIn) {
+    case "query":
+      return `Enter the API key value. Sent as \`?${options.authApiKeyName}={apiKey}\` query parameter.`;
+    case "cookie":
+      return `Enter the API key value. Sent as \`${options.authApiKeyName}={apiKey}\` cookie.`;
+    default:
+      return `Enter the API key value. Sent as \`${options.authApiKeyName}: {apiKey}\` header.`;
+  }
+}
+
+/**
  * Builds the `Auth` security scheme for the configured `auth` preset.
  * Returns undefined when authentication is disabled.
  */
@@ -84,7 +99,7 @@ function buildSecuritySchemes(
           type: "apiKey",
           in: options.authApiKeyIn,
           name: options.authApiKeyName,
-          description: API_KEY_DESCRIPTION,
+          description: apiKeyDescription(options),
         },
       };
   }

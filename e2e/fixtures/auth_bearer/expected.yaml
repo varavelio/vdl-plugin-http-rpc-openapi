@@ -23,7 +23,7 @@ components:
       type: http
       scheme: bearer
       bearerFormat: JWT
-      description: Enter the bearer token.
+      description: "Enter the bearer token. Sent as `Authorization: Bearer <token>` header."
   schemas:
     Entity:
       type: object

@@ -3711,9 +3711,8 @@ function primitiveToJsonSchema(primitiveName) {
 __name(primitiveToJsonSchema, "primitiveToJsonSchema");
 
 // src/spec-builder/components.ts
-var API_KEY_DESCRIPTION = "Enter the API key value.";
-var BEARER_DESCRIPTION = "Enter the bearer token.";
-var BASIC_DESCRIPTION = "Enter the username and password.";
+var BEARER_DESCRIPTION = "Enter the bearer token. Sent as `Authorization: Bearer <token>` header.";
+var BASIC_DESCRIPTION = "Enter the username and password. Sent as `Authorization: Basic <base64(username:password)>` header.";
 function buildComponents(ir, rpcGroups, options) {
   const schemas2 = buildSchemas(ir);
   const requestBodies = buildRequestBodies(rpcGroups);
@@ -3735,6 +3734,17 @@ function buildComponents(ir, rpcGroups, options) {
   return components;
 }
 __name(buildComponents, "buildComponents");
+function apiKeyDescription(options) {
+  switch (options.authApiKeyIn) {
+    case "query":
+      return `Enter the API key value. Sent as \`?${options.authApiKeyName}={apiKey}\` query parameter.`;
+    case "cookie":
+      return `Enter the API key value. Sent as \`${options.authApiKeyName}={apiKey}\` cookie.`;
+    default:
+      return `Enter the API key value. Sent as \`${options.authApiKeyName}: {apiKey}\` header.`;
+  }
+}
+__name(apiKeyDescription, "apiKeyDescription");
 function buildSecuritySchemes(options) {
   switch (options.auth) {
     case "none":
@@ -3762,7 +3772,7 @@ function buildSecuritySchemes(options) {
           type: "apiKey",
           in: options.authApiKeyIn,
           name: options.authApiKeyName,
-          description: API_KEY_DESCRIPTION
+          description: apiKeyDescription(options)
         }
       };
   }

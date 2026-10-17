@@ -22,7 +22,8 @@ components:
     Auth:
       type: http
       scheme: basic
-      description: Enter the username and password.
+      description: "Enter the username and password. Sent as `Authorization: Basic
+        <base64(username:password)>` header."
   schemas:
     Entity:
       type: object

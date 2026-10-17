@@ -32,7 +32,7 @@ components:
       type: apiKey
       in: header
       name: Authorization
-      description: Enter the API key value.
+      description: "Enter the API key value. Sent as `Authorization: {apiKey}` header."
   schemas:
     Task:
       type: object
