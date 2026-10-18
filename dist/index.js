@@ -214,6 +214,16 @@ function escapeScriptTag(str) {
 }
 __name(escapeScriptTag, "escapeScriptTag");
 
+// node_modules/@varavel/vdl-plugin-sdk/dist/utils/strings/first-n-chars.js
+function firstNChars(str, n, ellipsis = true) {
+  const length = Number.isFinite(n) ? Math.trunc(n) : 0;
+  if (length <= 0) return "";
+  if (str.length <= length) return str;
+  const result = str.slice(0, length);
+  return ellipsis ? `${result}...` : result;
+}
+__name(firstNChars, "firstNChars");
+
 // node_modules/@varavel/vdl-plugin-sdk/dist/utils/strings/trim-internal.js
 function toTrimCharacterSet(chars) {
   const values = Array.isArray(chars) ? chars : [chars];
@@ -3891,6 +3901,7 @@ function buildPaths(rpcGroups) {
   return entriesToRecord2(entries);
 }
 __name(buildPaths, "buildPaths");
+var MAX_PROC_SUMMARY_LENGTH = 77;
 function toLowerFirst(value) {
   if (value.length === 0) {
     return value;
@@ -3925,6 +3936,7 @@ function buildPathProc(proc) {
   const description = procDescription(proc);
   if (description) {
     pathProc.description = description;
+    pathProc.summary = firstNChars(description, MAX_PROC_SUMMARY_LENGTH);
   }
   if (proc.deprecated !== void 0) {
     pathProc.deprecated = true;

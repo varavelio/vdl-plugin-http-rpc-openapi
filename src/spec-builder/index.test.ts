@@ -298,6 +298,78 @@ describe("buildPaths", () => {
 
     expect(proc.deprecated).toBe(true);
     expect(proc.description).toBe("Deprecated: Use getUserV2.");
+    expect(proc.summary).toBe("Deprecated: Use getUserV2.");
+  });
+
+  it("omits summary when a procedure has no description", () => {
+    const paths = buildPaths([
+      {
+        name: "Users",
+        procs: [
+          {
+            rpcName: "Users",
+            name: "getUser",
+            inputFields: [],
+            outputFields: [],
+          },
+        ],
+      },
+    ]);
+
+    const proc = (paths["/users/getUser"] as Record<string, unknown>)
+      .post as Record<string, unknown>;
+
+    expect(proc.description).toBeUndefined();
+    expect(proc.summary).toBeUndefined();
+  });
+
+  it("mirrors short descriptions into summary", () => {
+    const paths = buildPaths([
+      {
+        name: "Users",
+        procs: [
+          {
+            rpcName: "Users",
+            name: "getUser",
+            doc: "Get a user.",
+            inputFields: [],
+            outputFields: [],
+          },
+        ],
+      },
+    ]);
+
+    const proc = (paths["/users/getUser"] as Record<string, unknown>)
+      .post as Record<string, unknown>;
+
+    expect(proc.description).toBe("Get a user.");
+    expect(proc.summary).toBe("Get a user.");
+  });
+
+  it("truncates long descriptions in summary with an ellipsis", () => {
+    const description = `${"a".repeat(150)}.`;
+
+    const paths = buildPaths([
+      {
+        name: "Users",
+        procs: [
+          {
+            rpcName: "Users",
+            name: "getUser",
+            doc: description,
+            inputFields: [],
+            outputFields: [],
+          },
+        ],
+      },
+    ]);
+
+    const proc = (paths["/users/getUser"] as Record<string, unknown>)
+      .post as Record<string, unknown>;
+
+    expect(proc.description).toBe(description);
+    expect(proc.summary).toBe(`${"a".repeat(77)}...`);
+    expect((proc.summary as string).length).toBeLessThanOrEqual(80);
   });
 });
 

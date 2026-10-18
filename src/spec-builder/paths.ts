@@ -1,4 +1,4 @@
-import { pascalCase } from "@varavel/vdl-plugin-sdk/utils/strings";
+import { firstNChars, pascalCase } from "@varavel/vdl-plugin-sdk/utils/strings";
 import type { RpcGroup, RpcProc } from "../rpc-model";
 
 /**
@@ -25,6 +25,9 @@ export function buildPaths(rpcGroups: RpcGroup[]): Record<string, unknown> {
 
   return entriesToRecord(entries);
 }
+
+/** Content characters kept in summaries; plus "..." the total never exceeds 80. */
+const MAX_PROC_SUMMARY_LENGTH = 77;
 
 /**
  * Applies the VPP-2 route rule to an RPC service name.
@@ -66,6 +69,7 @@ function buildPathProc(proc: RpcProc): Record<string, unknown> {
 
   if (description) {
     pathProc.description = description;
+    pathProc.summary = firstNChars(description, MAX_PROC_SUMMARY_LENGTH);
   }
 
   if (proc.deprecated !== undefined) {

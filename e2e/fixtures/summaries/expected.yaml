@@ -1,0 +1,346 @@
+openapi: 3.0.0
+info:
+  title: Summaries API
+  version: 1.0.0
+security:
+  - Auth: []
+tags:
+  - name: SummaryServiceProcedures
+    description: Procedures for SummaryService
+paths:
+  /summaryService/createUser:
+    post:
+      operationId: summaryServiceCreateUser
+      tags:
+        - SummaryServiceProcedures
+      requestBody:
+        $ref: "#/components/requestBodies/SummaryServiceCreateUserInput"
+      responses:
+        "200":
+          $ref: "#/components/responses/SummaryServiceCreateUserOutput"
+        "404":
+          $ref: "#/components/responses/RouteNotFound"
+        "500":
+          $ref: "#/components/responses/InternalError"
+        default:
+          $ref: "#/components/responses/TransportFailure"
+      description: Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
+        eiusmod tempor incididunt ut labore et dolore magna aliqua ut enim ad
+        minim veniam quis nostrud.
+      summary: Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod
+        tempo...
+  /summaryService/deleteOldUser:
+    post:
+      operationId: summaryServiceDeleteOldUser
+      tags:
+        - SummaryServiceProcedures
+      requestBody:
+        $ref: "#/components/requestBodies/SummaryServiceDeleteOldUserInput"
+      responses:
+        "200":
+          $ref: "#/components/responses/SummaryServiceDeleteOldUserOutput"
+        "404":
+          $ref: "#/components/responses/RouteNotFound"
+        "500":
+          $ref: "#/components/responses/InternalError"
+        default:
+          $ref: "#/components/responses/TransportFailure"
+      description: >-
+        Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod
+        tempor incididunt ut labore et dolore magna aliqua ut enim ad minim
+        veniam quis nostrud.
+
+
+        Deprecated: Will be removed in v3.0.
+      summary: Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod
+        tempo...
+      deprecated: true
+  /summaryService/getOldUser:
+    post:
+      operationId: summaryServiceGetOldUser
+      tags:
+        - SummaryServiceProcedures
+      requestBody:
+        $ref: "#/components/requestBodies/SummaryServiceGetOldUserInput"
+      responses:
+        "200":
+          $ref: "#/components/responses/SummaryServiceGetOldUserOutput"
+        "404":
+          $ref: "#/components/responses/RouteNotFound"
+        "500":
+          $ref: "#/components/responses/InternalError"
+        default:
+          $ref: "#/components/responses/TransportFailure"
+      description: |-
+        Returns the legacy user payload.
+
+        Deprecated: Use getUserV2 instead.
+      summary: |-
+        Returns the legacy user payload.
+
+        Deprecated: Use getUserV2 instead.
+      deprecated: true
+  /summaryService/getUser:
+    post:
+      operationId: summaryServiceGetUser
+      tags:
+        - SummaryServiceProcedures
+      requestBody:
+        $ref: "#/components/requestBodies/SummaryServiceGetUserInput"
+      responses:
+        "200":
+          $ref: "#/components/responses/SummaryServiceGetUserOutput"
+        "404":
+          $ref: "#/components/responses/RouteNotFound"
+        "500":
+          $ref: "#/components/responses/InternalError"
+        default:
+          $ref: "#/components/responses/TransportFailure"
+      description: Get a user by id.
+      summary: Get a user by id.
+  /summaryService/ping:
+    post:
+      operationId: summaryServicePing
+      tags:
+        - SummaryServiceProcedures
+      requestBody:
+        $ref: "#/components/requestBodies/SummaryServicePingInput"
+      responses:
+        "200":
+          $ref: "#/components/responses/SummaryServicePingOutput"
+        "404":
+          $ref: "#/components/responses/RouteNotFound"
+        "500":
+          $ref: "#/components/responses/InternalError"
+        default:
+          $ref: "#/components/responses/TransportFailure"
+components:
+  securitySchemes:
+    Auth:
+      type: apiKey
+      in: header
+      name: Authorization
+      description: "Enter the API key value. Sent as `Authorization: {apiKey}` header."
+  requestBodies:
+    SummaryServiceCreateUserInput:
+      description: Request body for SummaryService/createUser procedure
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              name:
+                type: string
+            required:
+              - name
+    SummaryServiceDeleteOldUserInput:
+      description: Request body for SummaryService/deleteOldUser procedure
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              id:
+                type: string
+            required:
+              - id
+    SummaryServiceGetOldUserInput:
+      description: Request body for SummaryService/getOldUser procedure
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              id:
+                type: string
+            required:
+              - id
+    SummaryServiceGetUserInput:
+      description: Request body for SummaryService/getUser procedure
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              id:
+                type: string
+            required:
+              - id
+    SummaryServicePingInput:
+      description: Request body for SummaryService/ping procedure
+      content:
+        application/json:
+          schema:
+            type: object
+            properties: {}
+  responses:
+    InternalError:
+      description: Unhandled server failure. Transport failure, never an application
+        error envelope.
+    RouteNotFound:
+      description: Unknown route. The procedure path does not exist. Transport
+        failure, never an application error envelope.
+    SummaryServiceCreateUserOutput:
+      description: Response for SummaryService/createUser procedure
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              ok:
+                type: boolean
+              output:
+                type: object
+                properties:
+                  id:
+                    type: string
+                required:
+                  - id
+              error:
+                type: object
+                properties:
+                  message:
+                    type: string
+                  category:
+                    type: string
+                  code:
+                    type: string
+                  details:
+                    type: object
+                    properties: {}
+                    additionalProperties: true
+                required:
+                  - message
+            required:
+              - ok
+    SummaryServiceDeleteOldUserOutput:
+      description: Response for SummaryService/deleteOldUser procedure
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              ok:
+                type: boolean
+              output:
+                type: object
+                properties:
+                  deleted:
+                    type: boolean
+                required:
+                  - deleted
+              error:
+                type: object
+                properties:
+                  message:
+                    type: string
+                  category:
+                    type: string
+                  code:
+                    type: string
+                  details:
+                    type: object
+                    properties: {}
+                    additionalProperties: true
+                required:
+                  - message
+            required:
+              - ok
+    SummaryServiceGetOldUserOutput:
+      description: Response for SummaryService/getOldUser procedure
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              ok:
+                type: boolean
+              output:
+                type: object
+                properties:
+                  id:
+                    type: string
+                required:
+                  - id
+              error:
+                type: object
+                properties:
+                  message:
+                    type: string
+                  category:
+                    type: string
+                  code:
+                    type: string
+                  details:
+                    type: object
+                    properties: {}
+                    additionalProperties: true
+                required:
+                  - message
+            required:
+              - ok
+    SummaryServiceGetUserOutput:
+      description: Response for SummaryService/getUser procedure
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              ok:
+                type: boolean
+              output:
+                type: object
+                properties:
+                  id:
+                    type: string
+                required:
+                  - id
+              error:
+                type: object
+                properties:
+                  message:
+                    type: string
+                  category:
+                    type: string
+                  code:
+                    type: string
+                  details:
+                    type: object
+                    properties: {}
+                    additionalProperties: true
+                required:
+                  - message
+            required:
+              - ok
+    SummaryServicePingOutput:
+      description: Response for SummaryService/ping procedure
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              ok:
+                type: boolean
+              output:
+                type: object
+                properties: {}
+              error:
+                type: object
+                properties:
+                  message:
+                    type: string
+                  category:
+                    type: string
+                  code:
+                    type: string
+                  details:
+                    type: object
+                    properties: {}
+                    additionalProperties: true
+                required:
+                  - message
+            required:
+              - ok
+    TransportFailure:
+      description: Transport or infrastructure failure. Transport failure, never an
+        application error envelope.

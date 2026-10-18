@@ -1,0 +1,63 @@
+// Tests procedure summary mirroring with truncation and deprecation
+
+@httpRpc
+type SummaryService {
+  """ Get a user by id. """
+  @proc
+  getUser {
+    input {
+      id string
+    }
+
+    output {
+      id string
+    }
+  }
+
+  """ Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua ut enim ad minim veniam quis nostrud. """
+  @proc
+  createUser {
+    input {
+      name string
+    }
+
+    output {
+      id string
+    }
+  }
+
+  @proc
+  ping {
+    input {
+    }
+
+    output {
+    }
+  }
+
+  """ Returns the legacy user payload. """
+  @deprecated("Use getUserV2 instead.")
+  @proc
+  getOldUser {
+    input {
+      id string
+    }
+
+    output {
+      id string
+    }
+  }
+
+  """ Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua ut enim ad minim veniam quis nostrud. """
+  @deprecated("Will be removed in v3.0.")
+  @proc
+  deleteOldUser {
+    input {
+      id string
+    }
+
+    output {
+      deleted bool
+    }
+  }
+}

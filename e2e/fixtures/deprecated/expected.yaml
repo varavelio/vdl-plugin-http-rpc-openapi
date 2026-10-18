@@ -25,6 +25,7 @@ paths:
         default:
           $ref: "#/components/responses/TransportFailure"
       description: "Deprecated: Will be removed in v3.0"
+      summary: "Deprecated: Will be removed in v3.0"
       deprecated: true
   /userService/getUser:
     post:
@@ -43,6 +44,7 @@ paths:
         default:
           $ref: "#/components/responses/TransportFailure"
       description: "Deprecated: Use GetUserV2 instead"
+      summary: "Deprecated: Use GetUserV2 instead"
       deprecated: true
   /userService/getUserV2:
     post:
