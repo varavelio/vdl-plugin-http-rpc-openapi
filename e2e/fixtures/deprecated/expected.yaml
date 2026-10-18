@@ -10,6 +10,7 @@ tags:
 paths:
   /userService/deleteUser:
     post:
+      operationId: userServiceDeleteUser
       tags:
         - UserServiceProcedures
       requestBody:
@@ -21,6 +22,7 @@ paths:
       deprecated: true
   /userService/getUser:
     post:
+      operationId: userServiceGetUser
       tags:
         - UserServiceProcedures
       requestBody:
@@ -32,6 +34,7 @@ paths:
       deprecated: true
   /userService/getUserV2:
     post:
+      operationId: userServiceGetUserV2
       tags:
         - UserServiceProcedures
       requestBody:

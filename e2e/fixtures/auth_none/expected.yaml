@@ -8,6 +8,7 @@ tags:
 paths:
   /entityService/getEntity:
     post:
+      operationId: entityServiceGetEntity
       tags:
         - EntityServiceProcedures
       requestBody:

@@ -10,6 +10,7 @@ tags:
 paths:
   /extremeService/collectionTest:
     post:
+      operationId: extremeServiceCollectionTest
       tags:
         - ExtremeServiceProcedures
       requestBody:
@@ -19,6 +20,7 @@ paths:
           $ref: "#/components/responses/ExtremeServiceCollectionTestOutput"
   /extremeService/deepMetadataTest:
     post:
+      operationId: extremeServiceDeepMetadataTest
       tags:
         - ExtremeServiceProcedures
       requestBody:
@@ -28,6 +30,7 @@ paths:
           $ref: "#/components/responses/ExtremeServiceDeepMetadataTestOutput"
   /extremeService/handleMatrices:
     post:
+      operationId: extremeServiceHandleMatrices
       tags:
         - ExtremeServiceProcedures
       requestBody:
@@ -37,6 +40,7 @@ paths:
           $ref: "#/components/responses/ExtremeServiceHandleMatricesOutput"
   /extremeService/inlineExtreme:
     post:
+      operationId: extremeServiceInlineExtreme
       tags:
         - ExtremeServiceProcedures
       requestBody:
@@ -46,6 +50,7 @@ paths:
           $ref: "#/components/responses/ExtremeServiceInlineExtremeOutput"
   /extremeService/optionalLabyrinth:
     post:
+      operationId: extremeServiceOptionalLabyrinth
       tags:
         - ExtremeServiceProcedures
       requestBody:
@@ -55,6 +60,7 @@ paths:
           $ref: "#/components/responses/ExtremeServiceOptionalLabyrinthOutput"
   /extremeService/processDeep:
     post:
+      operationId: extremeServiceProcessDeep
       tags:
         - ExtremeServiceProcedures
       requestBody:
@@ -64,6 +70,7 @@ paths:
           $ref: "#/components/responses/ExtremeServiceProcessDeepOutput"
   /extremeService/queryMaps:
     post:
+      operationId: extremeServiceQueryMaps
       tags:
         - ExtremeServiceProcedures
       requestBody:
@@ -73,6 +80,7 @@ paths:
           $ref: "#/components/responses/ExtremeServiceQueryMapsOutput"
   /extremeService/stressTest:
     post:
+      operationId: extremeServiceStressTest
       tags:
         - ExtremeServiceProcedures
       requestBody:

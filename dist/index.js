@@ -3894,6 +3894,7 @@ function buildPathProc(proc) {
   const inputName = `${proc.rpcName}${pascalCase(proc.name)}Input`;
   const outputName = `${proc.rpcName}${pascalCase(proc.name)}Output`;
   const pathProc = {
+    operationId: buildOperationId(proc),
     tags: [`${proc.rpcName}Procedures`],
     requestBody: {
       $ref: `#/components/requestBodies/${inputName}`
@@ -3914,6 +3915,10 @@ function buildPathProc(proc) {
   return pathProc;
 }
 __name(buildPathProc, "buildPathProc");
+function buildOperationId(proc) {
+  return `${toLowerFirst(proc.rpcName)}${pascalCase(proc.name)}`;
+}
+__name(buildOperationId, "buildOperationId");
 function procDescription(proc) {
   if (proc.deprecated === void 0 || proc.deprecated === "") {
     return proc.doc;

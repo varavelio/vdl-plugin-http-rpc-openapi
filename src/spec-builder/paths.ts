@@ -41,6 +41,7 @@ function buildPathProc(proc: RpcProc): Record<string, unknown> {
   const inputName = `${proc.rpcName}${pascalCase(proc.name)}Input`;
   const outputName = `${proc.rpcName}${pascalCase(proc.name)}Output`;
   const pathProc: Record<string, unknown> = {
+    operationId: buildOperationId(proc),
     tags: [`${proc.rpcName}Procedures`],
     requestBody: {
       $ref: `#/components/requestBodies/${inputName}`,
@@ -63,6 +64,16 @@ function buildPathProc(proc: RpcProc): Record<string, unknown> {
   }
 
   return pathProc;
+}
+
+/**
+ * Builds the stable `operationId` for a procedure.
+ * Format is `<lowerFirst(RPCName)><ProcedureName>` so `Users` plus
+ * `createUser` becomes `usersCreateUser`, a valid JS method name.
+ * Matches the `lowerFirst` route rule already used for paths.
+ */
+function buildOperationId(proc: RpcProc): string {
+  return `${toLowerFirst(proc.rpcName)}${pascalCase(proc.name)}`;
 }
 
 function procDescription(proc: RpcProc): string | undefined {

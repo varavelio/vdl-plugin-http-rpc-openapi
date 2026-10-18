@@ -10,6 +10,7 @@ tags:
 paths:
   /taskService/createTask:
     post:
+      operationId: taskServiceCreateTask
       tags:
         - TaskServiceProcedures
       requestBody:
@@ -19,6 +20,7 @@ paths:
           $ref: "#/components/responses/TaskServiceCreateTaskOutput"
   /taskService/getTasksByPriority:
     post:
+      operationId: taskServiceGetTasksByPriority
       tags:
         - TaskServiceProcedures
       requestBody:

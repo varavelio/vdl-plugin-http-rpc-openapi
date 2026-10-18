@@ -10,6 +10,7 @@ tags:
 paths:
   /keywordService/delete:
     post:
+      operationId: keywordServiceDelete
       tags:
         - KeywordServiceProcedures
       requestBody:
@@ -19,6 +20,7 @@ paths:
           $ref: "#/components/responses/KeywordServiceDeleteOutput"
   /keywordService/get:
     post:
+      operationId: keywordServiceGet
       tags:
         - KeywordServiceProcedures
       requestBody:
@@ -28,6 +30,7 @@ paths:
           $ref: "#/components/responses/KeywordServiceGetOutput"
   /keywordService/post:
     post:
+      operationId: keywordServicePost
       tags:
         - KeywordServiceProcedures
       requestBody:
@@ -37,6 +40,7 @@ paths:
           $ref: "#/components/responses/KeywordServicePostOutput"
   /keywordService/testKeywords:
     post:
+      operationId: keywordServiceTestKeywords
       tags:
         - KeywordServiceProcedures
       requestBody:

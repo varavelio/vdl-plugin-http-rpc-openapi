@@ -10,6 +10,7 @@ tags:
 paths:
   /service/createUser:
     post:
+      operationId: serviceCreateUser
       tags:
         - ServiceProcedures
       requestBody:
@@ -19,6 +20,7 @@ paths:
           $ref: "#/components/responses/ServiceCreateUserOutput"
   /service/getUser:
     post:
+      operationId: serviceGetUser
       tags:
         - ServiceProcedures
       requestBody:

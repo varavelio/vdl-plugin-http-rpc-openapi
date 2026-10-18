@@ -18,6 +18,7 @@ tags:
 paths:
   /itemService/getItem:
     post:
+      operationId: itemServiceGetItem
       tags:
         - ItemServiceProcedures
       requestBody:

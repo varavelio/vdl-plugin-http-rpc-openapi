@@ -249,6 +249,32 @@ describe("buildPaths", () => {
     ]);
 
     expect(Object.keys(paths)).toEqual(["/users/getUser"]);
+
+    const proc = (paths["/users/getUser"] as Record<string, unknown>)
+      .post as Record<string, unknown>;
+
+    expect(proc.operationId).toBe("usersGetUser");
+  });
+
+  it("normalizes PascalCase procedures into camelCase operationIds", () => {
+    const paths = buildPaths([
+      {
+        name: "Service",
+        procs: [
+          {
+            rpcName: "Service",
+            name: "Ping",
+            inputFields: [],
+            outputFields: [],
+          },
+        ],
+      },
+    ]);
+
+    const proc = (paths["/service/Ping"] as Record<string, unknown>)
+      .post as Record<string, unknown>;
+
+    expect(proc.operationId).toBe("servicePing");
   });
 
   it("marks deprecated procedures and appends the message", () => {

@@ -14,6 +14,7 @@ tags:
 paths:
   /orderService/createOrder:
     post:
+      operationId: orderServiceCreateOrder
       tags:
         - OrderServiceProcedures
       requestBody:
@@ -23,6 +24,7 @@ paths:
           $ref: "#/components/responses/OrderServiceCreateOrderOutput"
   /orderService/getOrdersByUser:
     post:
+      operationId: orderServiceGetOrdersByUser
       tags:
         - OrderServiceProcedures
       requestBody:
@@ -32,6 +34,7 @@ paths:
           $ref: "#/components/responses/OrderServiceGetOrdersByUserOutput"
   /productService/getProduct:
     post:
+      operationId: productServiceGetProduct
       tags:
         - ProductServiceProcedures
       requestBody:
@@ -41,6 +44,7 @@ paths:
           $ref: "#/components/responses/ProductServiceGetProductOutput"
   /productService/searchProducts:
     post:
+      operationId: productServiceSearchProducts
       tags:
         - ProductServiceProcedures
       requestBody:
@@ -50,6 +54,7 @@ paths:
           $ref: "#/components/responses/ProductServiceSearchProductsOutput"
   /userService/getUser:
     post:
+      operationId: userServiceGetUser
       tags:
         - UserServiceProcedures
       requestBody:
@@ -59,6 +64,7 @@ paths:
           $ref: "#/components/responses/UserServiceGetUserOutput"
   /userService/listUsers:
     post:
+      operationId: userServiceListUsers
       tags:
         - UserServiceProcedures
       requestBody:

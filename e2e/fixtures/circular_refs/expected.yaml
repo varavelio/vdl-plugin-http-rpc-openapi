@@ -10,6 +10,7 @@ tags:
 paths:
   /testService/testCircular:
     post:
+      operationId: testServiceTestCircular
       tags:
         - TestServiceProcedures
       requestBody:

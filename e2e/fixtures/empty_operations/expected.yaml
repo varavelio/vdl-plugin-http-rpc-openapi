@@ -10,6 +10,7 @@ tags:
 paths:
   /pingService/getStatus:
     post:
+      operationId: pingServiceGetStatus
       tags:
         - PingServiceProcedures
       requestBody:
@@ -19,6 +20,7 @@ paths:
           $ref: "#/components/responses/PingServiceGetStatusOutput"
   /pingService/logEvent:
     post:
+      operationId: pingServiceLogEvent
       tags:
         - PingServiceProcedures
       requestBody:
@@ -28,6 +30,7 @@ paths:
           $ref: "#/components/responses/PingServiceLogEventOutput"
   /pingService/ping:
     post:
+      operationId: pingServicePing
       tags:
         - PingServiceProcedures
       requestBody:

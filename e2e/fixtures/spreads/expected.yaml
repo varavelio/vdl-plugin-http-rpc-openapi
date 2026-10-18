@@ -10,6 +10,7 @@ tags:
 paths:
   /spreadService/complexSpread:
     post:
+      operationId: spreadServiceComplexSpread
       tags:
         - SpreadServiceProcedures
       requestBody:
@@ -19,6 +20,7 @@ paths:
           $ref: "#/components/responses/SpreadServiceComplexSpreadOutput"
   /spreadService/createUser:
     post:
+      operationId: spreadServiceCreateUser
       tags:
         - SpreadServiceProcedures
       requestBody:
@@ -28,6 +30,7 @@ paths:
           $ref: "#/components/responses/SpreadServiceCreateUserOutput"
   /spreadService/listItems:
     post:
+      operationId: spreadServiceListItems
       tags:
         - SpreadServiceProcedures
       requestBody:
@@ -37,6 +40,7 @@ paths:
           $ref: "#/components/responses/SpreadServiceListItemsOutput"
   /spreadService/searchWithMetadata:
     post:
+      operationId: spreadServiceSearchWithMetadata
       tags:
         - SpreadServiceProcedures
       requestBody:
