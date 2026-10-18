@@ -84,9 +84,9 @@ All options are optional.
 | `contactName`    | `string` | `""`                 | Sets `info.contact.name` when provided.                                                                                                                                                                             |
 | `contactEmail`   | `string` | `""`                 | Sets `info.contact.email` when provided.                                                                                                                                                                            |
 | `licenseName`    | `string` | `""`                 | Sets `info.license.name` when provided.                                                                                                                                                                             |
-| `auth`           | `string` | `"apiKey"`           | Security preset applied globally: `none` omits auth, `apiKey` sends a raw key, `bearer` sends `Authorization: Bearer <token>`, `basic` sends Basic auth base64 credentials.                                         |
+| `auth`           | `string` | `"apiKey"`           | Security preset applied globally: `none` omits auth, `apiKey` sends the API key value, `bearer` sends `Authorization: Bearer <token>`, `basic` sends `Authorization: Basic <base64(username:password)>`.            |
 | `authApiKeyName` | `string` | `"Authorization"`    | Key name sent as the API key value. Only used when `auth` is `apiKey`.                                                                                                                                              |
-| `authApiKeyIn`   | `string` | `"header"`           | Location of the API key value: `header`, `query`, or `cookie`. Only used when `auth` is `apiKey`.                                                                                                                   |  |
+| `authApiKeyIn`   | `string` | `"header"`           | Location of the API key value: `header`, `query`, or `cookie`. Only used when `auth` is `apiKey`.                                                                                                                   |
 
 Example with all options:
 
@@ -172,7 +172,7 @@ Procedure responses are wrapped in a consistent envelope:
 
 ## Notes
 
-- If there are no valid procedures in your schema, the plugin still generates a valid OpenAPI document skeleton (with `info`, `security`, and `components`).
+- If there are no valid procedures in your schema, the plugin still generates a valid OpenAPI document skeleton (with `info` and `components`, plus `security` when auth is enabled).
 
 ## License
 

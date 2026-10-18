@@ -464,7 +464,8 @@ describe("buildOpenApiSpec auth", () => {
         type: "http",
         scheme: "bearer",
         bearerFormat: "JWT",
-        description: expect.any(String),
+        description:
+          "Enter the bearer token. Sent as `Authorization: Bearer <token>` header.",
       },
     });
   });
@@ -480,7 +481,8 @@ describe("buildOpenApiSpec auth", () => {
       Auth: {
         type: "http",
         scheme: "basic",
-        description: expect.any(String),
+        description:
+          "Enter the username and password. Sent as `Authorization: Basic <base64(username:password)>` header.",
       },
     });
   });
@@ -494,11 +496,48 @@ describe("buildOpenApiSpec auth", () => {
     });
 
     const components = spec.components as Record<string, unknown>;
-    expect(components.securitySchemes).toMatchObject({
+    expect(components.securitySchemes).toEqual({
       Auth: {
         type: "apiKey",
         in: "query",
         name: "X-API-Key",
+        description:
+          "Enter the API key value. Sent as `?X-API-Key={apiKey}` query parameter.",
+      },
+    });
+  });
+
+  it("emits a default API key scheme in the Authorization header", () => {
+    const spec = buildOpenApiSpec(schema(), [], baseOptions);
+
+    const components = spec.components as Record<string, unknown>;
+    expect(components.securitySchemes).toEqual({
+      Auth: {
+        type: "apiKey",
+        in: "header",
+        name: "Authorization",
+        description:
+          "Enter the API key value. Sent as `Authorization: {apiKey}` header.",
+      },
+    });
+  });
+
+  it("emits an API key scheme in a cookie", () => {
+    const spec = buildOpenApiSpec(schema(), [], {
+      ...baseOptions,
+      auth: "apiKey",
+      authApiKeyName: "X-API-Key",
+      authApiKeyIn: "cookie",
+    });
+
+    const components = spec.components as Record<string, unknown>;
+    expect(components.securitySchemes).toEqual({
+      Auth: {
+        type: "apiKey",
+        in: "cookie",
+        name: "X-API-Key",
+        description:
+          "Enter the API key value. Sent as `X-API-Key={apiKey}` cookie.",
       },
     });
   });
