@@ -18,6 +18,12 @@ paths:
       responses:
         "200":
           $ref: "#/components/responses/ProfileServiceGetProfileOutput"
+        "404":
+          $ref: "#/components/responses/RouteNotFound"
+        "500":
+          $ref: "#/components/responses/InternalError"
+        default:
+          $ref: "#/components/responses/TransportFailure"
   /profileService/updateProfile:
     post:
       operationId: profileServiceUpdateProfile
@@ -28,6 +34,12 @@ paths:
       responses:
         "200":
           $ref: "#/components/responses/ProfileServiceUpdateProfileOutput"
+        "404":
+          $ref: "#/components/responses/RouteNotFound"
+        "500":
+          $ref: "#/components/responses/InternalError"
+        default:
+          $ref: "#/components/responses/TransportFailure"
 components:
   securitySchemes:
     Auth:
@@ -94,6 +106,9 @@ components:
             required:
               - id
   responses:
+    InternalError:
+      description: Unhandled server failure. Transport failure, never an application
+        error envelope.
     ProfileServiceGetProfileOutput:
       description: Response for ProfileService/getProfile procedure
       content:
@@ -164,3 +179,9 @@ components:
                   - message
             required:
               - ok
+    RouteNotFound:
+      description: Unknown route. The procedure path does not exist. Transport
+        failure, never an application error envelope.
+    TransportFailure:
+      description: Transport or infrastructure failure. Transport failure, never an
+        application error envelope.

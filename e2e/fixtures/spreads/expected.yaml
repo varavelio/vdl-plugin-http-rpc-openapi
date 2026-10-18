@@ -18,6 +18,12 @@ paths:
       responses:
         "200":
           $ref: "#/components/responses/SpreadServiceComplexSpreadOutput"
+        "404":
+          $ref: "#/components/responses/RouteNotFound"
+        "500":
+          $ref: "#/components/responses/InternalError"
+        default:
+          $ref: "#/components/responses/TransportFailure"
   /spreadService/createUser:
     post:
       operationId: spreadServiceCreateUser
@@ -28,6 +34,12 @@ paths:
       responses:
         "200":
           $ref: "#/components/responses/SpreadServiceCreateUserOutput"
+        "404":
+          $ref: "#/components/responses/RouteNotFound"
+        "500":
+          $ref: "#/components/responses/InternalError"
+        default:
+          $ref: "#/components/responses/TransportFailure"
   /spreadService/listItems:
     post:
       operationId: spreadServiceListItems
@@ -38,6 +50,12 @@ paths:
       responses:
         "200":
           $ref: "#/components/responses/SpreadServiceListItemsOutput"
+        "404":
+          $ref: "#/components/responses/RouteNotFound"
+        "500":
+          $ref: "#/components/responses/InternalError"
+        default:
+          $ref: "#/components/responses/TransportFailure"
   /spreadService/searchWithMetadata:
     post:
       operationId: spreadServiceSearchWithMetadata
@@ -48,6 +66,12 @@ paths:
       responses:
         "200":
           $ref: "#/components/responses/SpreadServiceSearchWithMetadataOutput"
+        "404":
+          $ref: "#/components/responses/RouteNotFound"
+        "500":
+          $ref: "#/components/responses/InternalError"
+        default:
+          $ref: "#/components/responses/TransportFailure"
 components:
   securitySchemes:
     Auth:
@@ -553,6 +577,12 @@ components:
               - metadata
               - query
   responses:
+    InternalError:
+      description: Unhandled server failure. Transport failure, never an application
+        error envelope.
+    RouteNotFound:
+      description: Unknown route. The procedure path does not exist. Transport
+        failure, never an application error envelope.
     SpreadServiceComplexSpreadOutput:
       description: Response for SpreadService/complexSpread procedure
       content:
@@ -747,3 +777,6 @@ components:
                   - message
             required:
               - ok
+    TransportFailure:
+      description: Transport or infrastructure failure. Transport failure, never an
+        application error envelope.

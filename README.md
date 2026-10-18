@@ -160,6 +160,7 @@ type ChatService {
 - One tag group per HTTP RPC service (`<Service>Procedures`).
 - One `POST` path per procedure with route pattern `/<lowerFirst(RPCName)>/<ProcedureName>` (for example `/users/getUser`).
 - Reusable request bodies and responses under `components.requestBodies` and `components.responses`.
+- Shared transport failure responses (`RouteNotFound`, `InternalError`, `TransportFailure`) referenced as `404`, `500`, and `default` on every procedure. Status only, no body: application errors always travel in the `200` envelope with `ok: false` (as required by the VPP).
 - All non HTTP RPC VDL types and enums emitted under `components.schemas`.
 
 ## Response Envelope Behavior

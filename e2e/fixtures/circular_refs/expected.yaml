@@ -18,6 +18,12 @@ paths:
       responses:
         "200":
           $ref: "#/components/responses/TestServiceTestCircularOutput"
+        "404":
+          $ref: "#/components/responses/RouteNotFound"
+        "500":
+          $ref: "#/components/responses/InternalError"
+        default:
+          $ref: "#/components/responses/TransportFailure"
 components:
   securitySchemes:
     Auth:
@@ -142,6 +148,12 @@ components:
               - chain
               - optional
   responses:
+    InternalError:
+      description: Unhandled server failure. Transport failure, never an application
+        error envelope.
+    RouteNotFound:
+      description: Unknown route. The procedure path does not exist. Transport
+        failure, never an application error envelope.
     TestServiceTestCircularOutput:
       description: Response for TestService/testCircular procedure
       content:
@@ -181,3 +193,6 @@ components:
                   - message
             required:
               - ok
+    TransportFailure:
+      description: Transport or infrastructure failure. Transport failure, never an
+        application error envelope.

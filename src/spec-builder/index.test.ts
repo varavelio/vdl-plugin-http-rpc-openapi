@@ -548,6 +548,68 @@ describe("buildOpenApiSpec auth", () => {
     });
   });
 
+  it("emits transport failure responses without bodies on every procedure", () => {
+    const spec = buildOpenApiSpec(
+      schema(),
+      [
+        {
+          name: "Feed",
+          procs: [
+            {
+              rpcName: "Feed",
+              name: "updates",
+              inputFields: [],
+              outputFields: [],
+            },
+          ],
+        },
+      ],
+      baseOptions,
+    );
+
+    expect(spec.paths).toMatchObject({
+      "/feed/updates": {
+        post: {
+          responses: {
+            200: {
+              $ref: "#/components/responses/FeedUpdatesOutput",
+            },
+            404: {
+              $ref: "#/components/responses/RouteNotFound",
+            },
+            500: {
+              $ref: "#/components/responses/InternalError",
+            },
+            default: {
+              $ref: "#/components/responses/TransportFailure",
+            },
+          },
+        },
+      },
+    });
+
+    const components = spec.components as Record<string, unknown>;
+    expect(components.responses).toMatchObject({
+      RouteNotFound: {
+        description:
+          "Unknown route. The procedure path does not exist. Transport failure, never an application error envelope.",
+      },
+      InternalError: {
+        description:
+          "Unhandled server failure. Transport failure, never an application error envelope.",
+      },
+      TransportFailure: {
+        description:
+          "Transport or infrastructure failure. Transport failure, never an application error envelope.",
+      },
+    });
+
+    const responses = components.responses as Record<string, unknown>;
+    for (const name of ["RouteNotFound", "InternalError", "TransportFailure"]) {
+      expect(responses[name]).not.toHaveProperty("content");
+    }
+  });
+
   it("emits an API key scheme in a cookie", () => {
     const spec = buildOpenApiSpec(schema(), [], {
       ...baseOptions,

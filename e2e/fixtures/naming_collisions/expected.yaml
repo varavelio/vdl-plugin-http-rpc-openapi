@@ -18,6 +18,12 @@ paths:
       responses:
         "200":
           $ref: "#/components/responses/KeywordServiceDeleteOutput"
+        "404":
+          $ref: "#/components/responses/RouteNotFound"
+        "500":
+          $ref: "#/components/responses/InternalError"
+        default:
+          $ref: "#/components/responses/TransportFailure"
   /keywordService/get:
     post:
       operationId: keywordServiceGet
@@ -28,6 +34,12 @@ paths:
       responses:
         "200":
           $ref: "#/components/responses/KeywordServiceGetOutput"
+        "404":
+          $ref: "#/components/responses/RouteNotFound"
+        "500":
+          $ref: "#/components/responses/InternalError"
+        default:
+          $ref: "#/components/responses/TransportFailure"
   /keywordService/post:
     post:
       operationId: keywordServicePost
@@ -38,6 +50,12 @@ paths:
       responses:
         "200":
           $ref: "#/components/responses/KeywordServicePostOutput"
+        "404":
+          $ref: "#/components/responses/RouteNotFound"
+        "500":
+          $ref: "#/components/responses/InternalError"
+        default:
+          $ref: "#/components/responses/TransportFailure"
   /keywordService/testKeywords:
     post:
       operationId: keywordServiceTestKeywords
@@ -48,6 +66,12 @@ paths:
       responses:
         "200":
           $ref: "#/components/responses/KeywordServiceTestKeywordsOutput"
+        "404":
+          $ref: "#/components/responses/RouteNotFound"
+        "500":
+          $ref: "#/components/responses/InternalError"
+        default:
+          $ref: "#/components/responses/TransportFailure"
 components:
   securitySchemes:
     Auth:
@@ -339,6 +363,9 @@ components:
               - keywords
               - edgeCases
   responses:
+    InternalError:
+      description: Unhandled server failure. Transport failure, never an application
+        error envelope.
     KeywordServiceDeleteOutput:
       description: Response for KeywordService/delete procedure
       content:
@@ -480,3 +507,9 @@ components:
                   - message
             required:
               - ok
+    RouteNotFound:
+      description: Unknown route. The procedure path does not exist. Transport
+        failure, never an application error envelope.
+    TransportFailure:
+      description: Transport or infrastructure failure. Transport failure, never an
+        application error envelope.

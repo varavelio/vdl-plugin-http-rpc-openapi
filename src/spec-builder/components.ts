@@ -16,6 +16,18 @@ const BEARER_DESCRIPTION =
 const BASIC_DESCRIPTION =
   "Enter the username and password. Sent as `Authorization: Basic <base64(username:password)>` header.";
 
+/** Shared transport failure response for unknown procedure routes. */
+const ROUTE_NOT_FOUND_DESCRIPTION =
+  "Unknown route. The procedure path does not exist. Transport failure, never an application error envelope.";
+
+/** Shared transport failure response for unhandled server errors. */
+const INTERNAL_ERROR_DESCRIPTION =
+  "Unhandled server failure. Transport failure, never an application error envelope.";
+
+/** Shared fallback response for any other transport or infrastructure failure. */
+const TRANSPORT_FAILURE_DESCRIPTION =
+  "Transport or infrastructure failure. Transport failure, never an application error envelope.";
+
 /**
  * Builds the reusable OpenAPI components section.
  */
@@ -165,6 +177,12 @@ function buildResponses(rpcGroups: RpcGroup[]): Record<string, unknown> {
       ]);
     }
   }
+
+  entries.push(
+    ["RouteNotFound", { description: ROUTE_NOT_FOUND_DESCRIPTION }],
+    ["InternalError", { description: INTERNAL_ERROR_DESCRIPTION }],
+    ["TransportFailure", { description: TRANSPORT_FAILURE_DESCRIPTION }],
+  );
 
   entries.sort((left, right) => left[0].localeCompare(right[0]));
 

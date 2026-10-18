@@ -18,6 +18,12 @@ paths:
       responses:
         "200":
           $ref: "#/components/responses/UserServiceDeleteUserOutput"
+        "404":
+          $ref: "#/components/responses/RouteNotFound"
+        "500":
+          $ref: "#/components/responses/InternalError"
+        default:
+          $ref: "#/components/responses/TransportFailure"
       description: "Deprecated: Will be removed in v3.0"
       deprecated: true
   /userService/getUser:
@@ -30,6 +36,12 @@ paths:
       responses:
         "200":
           $ref: "#/components/responses/UserServiceGetUserOutput"
+        "404":
+          $ref: "#/components/responses/RouteNotFound"
+        "500":
+          $ref: "#/components/responses/InternalError"
+        default:
+          $ref: "#/components/responses/TransportFailure"
       description: "Deprecated: Use GetUserV2 instead"
       deprecated: true
   /userService/getUserV2:
@@ -42,6 +54,12 @@ paths:
       responses:
         "200":
           $ref: "#/components/responses/UserServiceGetUserV2Output"
+        "404":
+          $ref: "#/components/responses/RouteNotFound"
+        "500":
+          $ref: "#/components/responses/InternalError"
+        default:
+          $ref: "#/components/responses/TransportFailure"
 components:
   securitySchemes:
     Auth:
@@ -110,6 +128,15 @@ components:
             required:
               - id
   responses:
+    InternalError:
+      description: Unhandled server failure. Transport failure, never an application
+        error envelope.
+    RouteNotFound:
+      description: Unknown route. The procedure path does not exist. Transport
+        failure, never an application error envelope.
+    TransportFailure:
+      description: Transport or infrastructure failure. Transport failure, never an
+        application error envelope.
     UserServiceDeleteUserOutput:
       description: Response for UserService/deleteUser procedure
       content:

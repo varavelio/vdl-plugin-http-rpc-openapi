@@ -18,6 +18,12 @@ paths:
       responses:
         "200":
           $ref: "#/components/responses/TaskServiceCreateTaskOutput"
+        "404":
+          $ref: "#/components/responses/RouteNotFound"
+        "500":
+          $ref: "#/components/responses/InternalError"
+        default:
+          $ref: "#/components/responses/TransportFailure"
   /taskService/getTasksByPriority:
     post:
       operationId: taskServiceGetTasksByPriority
@@ -28,6 +34,12 @@ paths:
       responses:
         "200":
           $ref: "#/components/responses/TaskServiceGetTasksByPriorityOutput"
+        "404":
+          $ref: "#/components/responses/RouteNotFound"
+        "500":
+          $ref: "#/components/responses/InternalError"
+        default:
+          $ref: "#/components/responses/TransportFailure"
 components:
   securitySchemes:
     Auth:
@@ -97,6 +109,12 @@ components:
             required:
               - priority
   responses:
+    InternalError:
+      description: Unhandled server failure. Transport failure, never an application
+        error envelope.
+    RouteNotFound:
+      description: Unknown route. The procedure path does not exist. Transport
+        failure, never an application error envelope.
     TaskServiceCreateTaskOutput:
       description: Response for TaskService/createTask procedure
       content:
@@ -165,3 +183,6 @@ components:
                   - message
             required:
               - ok
+    TransportFailure:
+      description: Transport or infrastructure failure. Transport failure, never an
+        application error envelope.

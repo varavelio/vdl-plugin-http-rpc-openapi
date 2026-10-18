@@ -18,6 +18,12 @@ paths:
       responses:
         "200":
           $ref: "#/components/responses/ExtremeServiceCollectionTestOutput"
+        "404":
+          $ref: "#/components/responses/RouteNotFound"
+        "500":
+          $ref: "#/components/responses/InternalError"
+        default:
+          $ref: "#/components/responses/TransportFailure"
   /extremeService/deepMetadataTest:
     post:
       operationId: extremeServiceDeepMetadataTest
@@ -28,6 +34,12 @@ paths:
       responses:
         "200":
           $ref: "#/components/responses/ExtremeServiceDeepMetadataTestOutput"
+        "404":
+          $ref: "#/components/responses/RouteNotFound"
+        "500":
+          $ref: "#/components/responses/InternalError"
+        default:
+          $ref: "#/components/responses/TransportFailure"
   /extremeService/handleMatrices:
     post:
       operationId: extremeServiceHandleMatrices
@@ -38,6 +50,12 @@ paths:
       responses:
         "200":
           $ref: "#/components/responses/ExtremeServiceHandleMatricesOutput"
+        "404":
+          $ref: "#/components/responses/RouteNotFound"
+        "500":
+          $ref: "#/components/responses/InternalError"
+        default:
+          $ref: "#/components/responses/TransportFailure"
   /extremeService/inlineExtreme:
     post:
       operationId: extremeServiceInlineExtreme
@@ -48,6 +66,12 @@ paths:
       responses:
         "200":
           $ref: "#/components/responses/ExtremeServiceInlineExtremeOutput"
+        "404":
+          $ref: "#/components/responses/RouteNotFound"
+        "500":
+          $ref: "#/components/responses/InternalError"
+        default:
+          $ref: "#/components/responses/TransportFailure"
   /extremeService/optionalLabyrinth:
     post:
       operationId: extremeServiceOptionalLabyrinth
@@ -58,6 +82,12 @@ paths:
       responses:
         "200":
           $ref: "#/components/responses/ExtremeServiceOptionalLabyrinthOutput"
+        "404":
+          $ref: "#/components/responses/RouteNotFound"
+        "500":
+          $ref: "#/components/responses/InternalError"
+        default:
+          $ref: "#/components/responses/TransportFailure"
   /extremeService/processDeep:
     post:
       operationId: extremeServiceProcessDeep
@@ -68,6 +98,12 @@ paths:
       responses:
         "200":
           $ref: "#/components/responses/ExtremeServiceProcessDeepOutput"
+        "404":
+          $ref: "#/components/responses/RouteNotFound"
+        "500":
+          $ref: "#/components/responses/InternalError"
+        default:
+          $ref: "#/components/responses/TransportFailure"
   /extremeService/queryMaps:
     post:
       operationId: extremeServiceQueryMaps
@@ -78,6 +114,12 @@ paths:
       responses:
         "200":
           $ref: "#/components/responses/ExtremeServiceQueryMapsOutput"
+        "404":
+          $ref: "#/components/responses/RouteNotFound"
+        "500":
+          $ref: "#/components/responses/InternalError"
+        default:
+          $ref: "#/components/responses/TransportFailure"
   /extremeService/stressTest:
     post:
       operationId: extremeServiceStressTest
@@ -88,6 +130,12 @@ paths:
       responses:
         "200":
           $ref: "#/components/responses/ExtremeServiceStressTestOutput"
+        "404":
+          $ref: "#/components/responses/RouteNotFound"
+        "500":
+          $ref: "#/components/responses/InternalError"
+        default:
+          $ref: "#/components/responses/TransportFailure"
 components:
   securitySchemes:
     Auth:
@@ -1169,3 +1217,12 @@ components:
                   - message
             required:
               - ok
+    InternalError:
+      description: Unhandled server failure. Transport failure, never an application
+        error envelope.
+    RouteNotFound:
+      description: Unknown route. The procedure path does not exist. Transport
+        failure, never an application error envelope.
+    TransportFailure:
+      description: Transport or infrastructure failure. Transport failure, never an
+        application error envelope.

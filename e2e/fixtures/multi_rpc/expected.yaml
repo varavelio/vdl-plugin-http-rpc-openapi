@@ -22,6 +22,12 @@ paths:
       responses:
         "200":
           $ref: "#/components/responses/OrderServiceCreateOrderOutput"
+        "404":
+          $ref: "#/components/responses/RouteNotFound"
+        "500":
+          $ref: "#/components/responses/InternalError"
+        default:
+          $ref: "#/components/responses/TransportFailure"
   /orderService/getOrdersByUser:
     post:
       operationId: orderServiceGetOrdersByUser
@@ -32,6 +38,12 @@ paths:
       responses:
         "200":
           $ref: "#/components/responses/OrderServiceGetOrdersByUserOutput"
+        "404":
+          $ref: "#/components/responses/RouteNotFound"
+        "500":
+          $ref: "#/components/responses/InternalError"
+        default:
+          $ref: "#/components/responses/TransportFailure"
   /productService/getProduct:
     post:
       operationId: productServiceGetProduct
@@ -42,6 +54,12 @@ paths:
       responses:
         "200":
           $ref: "#/components/responses/ProductServiceGetProductOutput"
+        "404":
+          $ref: "#/components/responses/RouteNotFound"
+        "500":
+          $ref: "#/components/responses/InternalError"
+        default:
+          $ref: "#/components/responses/TransportFailure"
   /productService/searchProducts:
     post:
       operationId: productServiceSearchProducts
@@ -52,6 +70,12 @@ paths:
       responses:
         "200":
           $ref: "#/components/responses/ProductServiceSearchProductsOutput"
+        "404":
+          $ref: "#/components/responses/RouteNotFound"
+        "500":
+          $ref: "#/components/responses/InternalError"
+        default:
+          $ref: "#/components/responses/TransportFailure"
   /userService/getUser:
     post:
       operationId: userServiceGetUser
@@ -62,6 +86,12 @@ paths:
       responses:
         "200":
           $ref: "#/components/responses/UserServiceGetUserOutput"
+        "404":
+          $ref: "#/components/responses/RouteNotFound"
+        "500":
+          $ref: "#/components/responses/InternalError"
+        default:
+          $ref: "#/components/responses/TransportFailure"
   /userService/listUsers:
     post:
       operationId: userServiceListUsers
@@ -72,6 +102,12 @@ paths:
       responses:
         "200":
           $ref: "#/components/responses/UserServiceListUsersOutput"
+        "404":
+          $ref: "#/components/responses/RouteNotFound"
+        "500":
+          $ref: "#/components/responses/InternalError"
+        default:
+          $ref: "#/components/responses/TransportFailure"
 components:
   securitySchemes:
     Auth:
@@ -199,6 +235,9 @@ components:
               - limit
               - offset
   responses:
+    InternalError:
+      description: Unhandled server failure. Transport failure, never an application
+        error envelope.
     OrderServiceCreateOrderOutput:
       description: Response for OrderService/createOrder procedure
       content:
@@ -335,6 +374,12 @@ components:
                   - message
             required:
               - ok
+    RouteNotFound:
+      description: Unknown route. The procedure path does not exist. Transport
+        failure, never an application error envelope.
+    TransportFailure:
+      description: Transport or infrastructure failure. Transport failure, never an
+        application error envelope.
     UserServiceGetUserOutput:
       description: Response for UserService/getUser procedure
       content:

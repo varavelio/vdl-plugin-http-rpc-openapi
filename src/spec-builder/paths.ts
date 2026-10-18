@@ -50,6 +50,15 @@ function buildPathProc(proc: RpcProc): Record<string, unknown> {
       200: {
         $ref: `#/components/responses/${outputName}`,
       },
+      404: {
+        $ref: "#/components/responses/RouteNotFound",
+      },
+      500: {
+        $ref: "#/components/responses/InternalError",
+      },
+      default: {
+        $ref: "#/components/responses/TransportFailure",
+      },
     },
   };
 
